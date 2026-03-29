@@ -1,0 +1,494 @@
+{
+  "subject": "JIBA Entrance Test (JET) 2026",
+  "marks": 50,
+  "set": "C",
+  "time": 60,
+  "total_questions": 50,
+  "questions": [
+    {
+      "id": 1,
+      "question": "According to the \"7-38-55\" rule of communication, what percentage is attributed to body language?",
+      "options": ["7%", "38%", "55%", "10%"],
+      "answer": 3
+    },
+    {
+      "id": 2,
+      "question": "In the OBC technique of telephone etiquette, what does \"O\" stand for?",
+      "options": ["Objective", "Open", "Order", "Outcome"],
+      "answer": 2
+    },
+    {
+      "id": 3,
+      "question": "Which of the following is an example of \"Emotional Leakage\" during a call?",
+      "options": [
+        "Taking notes",
+        "Sounding frustrated or bored to the caller",
+        "Asking for clarification",
+        "Identifying yourself clearly"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 4,
+      "question": "What is the \"KISS\" principle in communication?",
+      "options": [
+        "Keep It Short and Simple",
+        "Knowledge is Super Strength",
+        "Keep It Systematic and Slow",
+        "Kind Interactions Support Success"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 5,
+      "question": "When making an international call to the USA, you should:",
+      "options": [
+        "Be prepared for long arguments",
+        "Be punctual and not beat around the bush",
+        "Avoid calling during off hours",
+        "Keep the tone light and easy-going"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 6,
+      "question": "In Japan, telephone communication should ideally be:",
+      "options": [
+        "Fast and aggressive",
+        "Clear and concise",
+        "Extremely long and detailed",
+        "Avoided in favor of mail"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 7,
+      "question": "Which behavioral style in the Platinum Grid is described as \"Indirect and Slower-Paced\"?",
+      "options": ["Director", "Socializer", "Thinker", "Relater"],
+      "answer": 3
+    },
+    {
+      "id": 8,
+      "question": "\"Socializers\" are characterized by being:",
+      "options": [
+        "Guarded and task-oriented",
+        "Relationship-oriented and fast-paced",
+        "Slower-paced and data-driven",
+        "Formal and proper"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 9,
+      "question": "What is the \"Rule 1\" of Netiquette?",
+      "options": [
+        "Respect privacy",
+        "Remember the Human",
+        "Don't abuse power",
+        "Share expert knowledge"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 10,
+      "question": "Typing an email in ALL CAPITAL LETTERS is considered:",
+      "options": [
+        "Professional",
+        "Urgent",
+        "Shouting (Poor Netiquette)",
+        "Creative"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 11,
+      "question": "Which font is NOT recommended for presentation slides?",
+      "options": ["Arial", "Comic Sans", "Tahoma", "Verdana"],
+      "answer": 2
+    },
+    {
+      "id": 12,
+      "question": "The \"SPQR\" structure in presentations stands for:",
+      "options": [
+        "Situation, Problem, Question, Response",
+        "System, Process, Quality, Result",
+        "Speech, Power, Quote, Review",
+        "Simple, Plain, Quick, Relevant"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 13,
+      "question": "For a presentation in a large hall, it is recommended to use:",
+      "options": [
+        "Light slides with dark text",
+        "Dark slides with light colored text",
+        "Small font sizes",
+        "Multiple animations per slide"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 14,
+      "question": "What is the ideal number of key points to have in a speech?",
+      "options": ["10 to 12", "2 to 5 (Ideally 3)", "At least 8", "Only 1"],
+      "answer": 2
+    },
+    {
+      "id": 15,
+      "question": "In Public Speaking, \"Ethos\" refers to:",
+      "options": [
+        "Logical evidence",
+        "Emotional connection",
+        "Speaker's credibility",
+        "Tone modulation"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 16,
+      "question": "Which type of speech is delivered without any prior preparation?",
+      "options": ["Manuscript", "Memorized", "Extemporaneous", "Impromptu"],
+      "answer": 4
+    },
+    {
+      "id": 17,
+      "question": "A resume is often described as a:",
+      "options": [
+        "Bio-data only",
+        "Professional pamphlet/promo",
+        "Detailed life story",
+        "Legal document"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 18,
+      "question": "In a resume, education details should be listed in:",
+      "options": [
+        "Chronological order",
+        "Reverse-chronological order",
+        "Order of importance",
+        "Alphabetical order"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 19,
+      "question": "A \"tweet-long cover letter\" in a resume refers to the:",
+      "options": [
+        "Contact details",
+        "Profile Summary",
+        "Hobbies section",
+        "Reference list"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 20,
+      "question": "Which of these is a professional email address format?",
+      "options": [
+        "cool_boy_99@yahoo.com",
+        "powerkumar@gmail.com",
+        "firstname.lastname@provider.com",
+        "attract123@outlook.com"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 21,
+      "question": "In the SMART goal acronym, \"M\" stands for:",
+      "options": ["Manageable", "Measurable", "Meaningful", "Motivational"],
+      "answer": 2
+    },
+    {
+      "id": 22,
+      "question": "\"The Meaningful Life\" in goal setting focuses on:",
+      "options": [
+        "Pursuing positive feelings",
+        "Perfecting what you are good at",
+        "Using strengths to serve a larger purpose",
+        "Financial gains"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 23,
+      "question": "Which behavior style \"thrives on data, information, and research\"?",
+      "options": ["Thinker", "Relater", "Director", "Socializer"],
+      "answer": 1
+    },
+    {
+      "id": 24,
+      "question": "When interacting with a \"Director\", you should be:",
+      "options": [
+        "Playful and spontaneous",
+        "Short and to the point",
+        "Emotionally expressive",
+        "Slow and detailed"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 25,
+      "question": "The purpose of an \"Elevator Pitch\" is to:",
+      "options": [
+        "Tell your entire life history",
+        "Make an impact in the shortest possible time",
+        "Ask for a salary hike",
+        "Complain about workplace issues"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 26,
+      "question": "Which of these is a \"Personal Competency\"?",
+      "options": [
+        "Mastery in Python",
+        "Degree in BCA",
+        "Adaptability",
+        "Knowledge of SQL"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 27,
+      "question": "\"Flame wars\" in Netiquette refers to:",
+      "options": [
+        "Technical glitches",
+        "Heated and emotional online arguments",
+        "Competitive gaming",
+        "Sharing large files"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 28,
+      "question": "Before listing a person as a \"Reference\" in your resume, you should:",
+      "options": [
+        "Check their salary",
+        "Brief them and ask for permission",
+        "Add their photo",
+        "Only use family members"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 29,
+      "question": "\"Logos\" in communication involves:",
+      "options": [
+        "Using facts and evidence",
+        "Showing attitude",
+        "Hand gestures",
+        "Eye contact"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 30,
+      "question": "Which document class is preferred for professional Resumes in LaTeX?",
+      "options": ["article", "report", "moderncv", "book"],
+      "answer": 3
+    },
+    {
+      "id": 31,
+      "question": "In telephone etiquette, what should you do if you are in doubt?",
+      "options": [
+        "Ignore it",
+        "Ask questions politely and clearly",
+        "Guess the answer",
+        "Hang up"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 32,
+      "question": "What is the recommended font size for the Title in a presentation slide?",
+      "options": ["24", "32", "40", "12"],
+      "answer": 3
+    },
+    {
+      "id": 33,
+      "question": "Which of the following should be avoided during a self-introduction?",
+      "options": [
+        "Eye contact",
+        "Using fillers (um, ah)",
+        "Confident posture",
+        "Conversational tone"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 34,
+      "question": "A \"Director\" style dislikes:",
+      "options": [
+        "Fast decisions",
+        "Inaction and stagnancy",
+        "Taking charge",
+        "Results"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 35,
+      "question": "The \"Platinum Rule\" of behavior is:",
+      "options": [
+        "Treat others how you want to be treated",
+        "Treat others how they want to be treated",
+        "Treat others with aggression",
+        "Ignore others' styles"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 36,
+      "question": "Which of the following is a \"Don't\" in Email Etiquette?",
+      "options": [
+        "Using a clear subject line",
+        "Double-checking attachments",
+        "Using humor and sarcasm",
+        "Being concise"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 37,
+      "question": "\"Pathos\" is used to:",
+      "options": [
+        "Prove a mathematical fact",
+        "Make a connection with the audience's emotions",
+        "Show technical skills",
+        "List educational qualifications"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 38,
+      "question": "\"Extemporaneous\" speech is:",
+      "options": [
+        "Read from a script",
+        "Memorized word for word",
+        "Carefully prepared but delivered using notes",
+        "Delivered on the spot without prep"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 39,
+      "question": "The \"Seven Step Process\" of resume making begins with:",
+      "options": [
+        "Job search",
+        "Exploring self",
+        "Setting goals",
+        "Writing education details"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 40,
+      "question": "An \"Elevator Pitch\" should sound:",
+      "options": [
+        "Robotic",
+        "Conversational and natural",
+        "Like you are reading a list",
+        "Angry"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 41,
+      "question": "Which of these is a \"Soft Skill\" often listed in resumes?",
+      "options": [
+        "C++ Programming",
+        "Data Analysis",
+        "Team Player",
+        "Machine Learning"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 42,
+      "question": "In a formal email, the salutation \"Dear Ms. Brown\" is followed by:",
+      "options": [
+        "A joke",
+        "The purpose of the email",
+        "Personal secrets",
+        "Informal slang"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 43,
+      "question": "\"Adaptability\" in behavioral styles means:",
+      "options": [
+        "Never changing your way",
+        "Forcing others to follow you",
+        "Being flexible to improve compatibility",
+        "Hiding your true self"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 44,
+      "question": "A SMART goal must be \"Time-bound\" to:",
+      "options": [
+        "Make it harder",
+        "Establish a sense of urgency",
+        "Waste time",
+        "Please the manager"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 45,
+      "question": "Which part of the call involves seeking permission to speak?",
+      "options": ["Open", "Body", "Close", "Conclusion"],
+      "answer": 1
+    },
+    {
+      "id": 46,
+      "question": "When a goal is \"Relevant\", it means:",
+      "options": [
+        "It is related to your long-term plans",
+        "It is very easy",
+        "It is funny",
+        "It involves many people"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 47,
+      "question": "\"Jotting notes\" during a call is a sign of:",
+      "options": [
+        "Distraction",
+        "Active Listening",
+        "Poor memory",
+        "Emotional leakage"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 48,
+      "question": "For an international call to Russia, it is suggested to:",
+      "options": [
+        "Call multiple times a day",
+        "Use mail instead or be very patient",
+        "Be very loud",
+        "Use slang"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 49,
+      "question": "In a presentation, \"Tell them what you told them\" refers to the:",
+      "options": ["Introduction", "Body", "Conclusion", "Q&A session"],
+      "answer": 3
+    },
+    {
+      "id": 50,
+      "question": "The \"Thinker\" style avoids people who are:",
+      "options": ["Logical", "Accurate", "Irrational", "Structured"],
+      "answer": 3
+    }
+  ]
+}

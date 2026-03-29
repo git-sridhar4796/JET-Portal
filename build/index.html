@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JET Portal</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body style="font-family: Arial, Helvetica, sans-serif">
+    <header class="bg-purple-800 p-2 sticky top-0 shadow-xl z-50">
+      <div
+        class="max-w-screen-xl mx-auto w-full flex justify-between items-center"
+      >
+        <section
+          id="branding"
+          class="flex justify-center items-center"
+          style="font-family: &quot;Times New Roman&quot;, Times, serif"
+        >
+          <img
+            src="../src/JIBA_Logo_Final_wo bg.png"
+            alt="JIBA Logo"
+            class="w-24 h-24 inline-block"
+          />
+          <section class="flex-row justify-center items-center">
+            <h2 class="text-white text-3xl font-bold">JIBA</h2>
+            <p class="text-white text-sm">
+              Joseph Institute of Business Administration
+            </p>
+            <p class="text-white text-sm">St. Joseph University</p>
+          </section>
+        </section>
+        <section class="flex-row justify-center items center">
+          <h1
+            class="text-white text-4xl text-center font-bold border-b-2 border-purple-950 pr-2"
+            style="font-family: &quot;Times New Roman&quot;, Times, serif"
+          >
+            JET Portal
+          </h1>
+          <p class="text-gray-300 text-lg text-center">JIBA Entrance Test</p>
+        </section>
+      </div>
+    </header>
+
+    <!-- Schedule Banner -->
+    <div
+      id="scheduleBanner"
+      class="w-full text-center font-semibold py-2 bg-yellow-300 shadow-md transform transition-transform duration-1000 hidden"
+    >
+      <span class="text-xl">🔒</span> The JIBA Entrance Test portal will only
+      become live at <span id="scheduleStartTime">10:00 AM</span>. Login is
+      currently disabled.
+    </div>
+
+    <!-- Login page -->
+
+    <div
+      id="loginScreen"
+      class="min-h-[calc(100vh-128px)] flex items-center justify-center"
+    >
+      <section
+        class="max-w-screen-xl w-full mx-auto grid grid-cols-10 m-2 p-2 gap-2 h-[calc(100vh-128px)] max-h-[500px]"
+      >
+        <section
+          id="loginImageContainer"
+          class="col-span-7 flex justify-start items-center"
+        >
+          <img
+            src="../src/login screen image.png"
+            alt="logo-screen-image"
+            class="w-3/4 h-3/4 rounded-md"
+          />
+        </section>
+        <section
+          id="loginCardContainer"
+          class="col-span-3 bg-purple-100 rounded-xl shadow-lg p-4"
+        >
+          <h2 class="text-2xl font-bold text-center mb-2">Login</h2>
+          <form
+            action="submit"
+            id="loginForm"
+            class="flex flex-col justify-center w-full gap-4 p-2 text-sm"
+          >
+            <div>
+              <label for="name" class="font-semibold">Full Name: </label>
+              <input
+                type="text"
+                id="nameInput"
+                class="w-full p-1 rounded-md"
+                placeholder="Enter your full name"
+                required
+                autocomplete="off"
+              />
+            </div>
+            <div>
+              <label for="applicationID" class="font-semibold"
+                >Application ID</label
+              >
+              <input
+                type="text"
+                id="applicationIdInput"
+                class="w-full p-1 rounded-md"
+                placeholder="Enter your application ID(eg. SJU/2026/1234)"
+                required
+                pattern="SJU/2026/[0-9]{4}"
+                title="Please enter a valid Application ID in the format: SJU/2026/XXXX (e.g., SJU/2026/1234)"
+                autocomplete="off"
+              />
+            </div>
+            <div>
+              <label for="email" class="font-semibold">Email ID</label>
+              <input
+                type="email"
+                id="emailIdInput"
+                class="w-full p-1 rounded-md"
+                placeholder="Enter your email ID"
+                required
+                pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+                title="Please enter a valid email address (e.g., student@gmail.com)"
+                autocomplete="off"
+              />
+            </div>
+            <div>
+              <label for="tel" class="font-semibold">Contact No </label>
+              <input
+                type="tel"
+                id="contactInput"
+                class="w-full p-1 rounded-md"
+                placeholder="Enter your contact number"
+                required
+                pattern="[0-9]{10}"
+                title="Please enter a valid 10-digit number"
+                autocomplete="off"
+              />
+            </div>
+            <div>
+              <label for="text" class="font-semibold">Place/City </label>
+              <input
+                type="text"
+                id="placeInput"
+                class="w-full p-1 rounded-md"
+                placeholder="Enter your place/city"
+                required
+                autocomplete="off"
+              />
+            </div>
+            <button
+              id="loginBtn"
+              type="submit"
+              class="bg-purple-600 hover:bg-purple-500 active:scale-95 rounded-md shadow-md text-white font-semibold p-1 transition text-lg mt-4"
+            >
+              Login
+            </button>
+          </form>
+        </section>
+      </section>
+    </div>
+
+    <!-- instructions screen -->
+
+    <section
+      id="instructionsScreen"
+      class="max-w-screen-xl w-full mx-auto p-4 hidden"
+    >
+      <h2 class="text-2xl font-bold mb-4">JIBA Entrance Test (JET) 2026</h2>
+      <h3 class="font-semibold text-xl mt-8">Instructions</h3>
+      <p class="text-sm text-gray-600">
+        Please read all instructions carefully.
+      </p>
+      <hr class="border border-black mt-2 mx-auto" />
+      <article class="mt-4">
+        <h4 class="font-semibold text-lg">Test Overview:-</h4>
+        <ul class="list-disc ml-2 pl-5 space-y-1">
+          <li><span class="font-semibold">Duration: </span>60 minutes</li>
+          <li>
+            <span class="font-semibold">Questions: </span>50 multiple choice
+            questions (MCQs)
+          </li>
+          <li>
+            <span class="font-semibold">Marking: </span>Each question carries 1
+            mark. There is no negative marking for incorrect answers.
+          </li>
+          <li>
+            <span class="font-semibold">Question Types: </span>The test contains
+            questions from general aptitude, logical reasoning, quantitative
+            ability, and english language skills.
+          </li>
+        </ul>
+
+        <h4 class="font-semibold text-lg mt-4">
+          Proctoring & Security Rules:-
+        </h4>
+        <ul class="list-disc ml-2 pl-5 space-y-1">
+          <li>
+            <span class="font-semibold">Full-Screen Mode: </span>Once the test
+            begins, the browser will enter full-screen mode. Any attempt to exit
+            full-screen will be logged as a violation.
+          </li>
+          <li>
+            <span class="font-semibold">Tab-Switching: </span>Switching tabs or
+            minimizing the browser window is strictly prohibited and will be
+            logged as a violation.
+          </li>
+          <li>
+            <span class="font-semibold">Right-Click & Shortcuts: </span
+            >Right-clicking and keyboard shortcuts (like Ctrl+C, Ctrl+Shift+I,
+            F12 or F5) are disabled to maintain test integrity and will be
+            counted as violations.
+          </li>
+          <li>
+            <span class="font-semibold">Warning System: </span>You will receive
+            a maximum of <span class="font-semibold">2 warnings</span> for
+            leaving the test screen. On the 3rd instance, your exam will be
+            <span class="font-semibold">automatically submitted</span>
+            immediately.
+          </li>
+        </ul>
+
+        <h4 class="font-semibold text-lg mt-4">Navigation & Submission:-</h4>
+        <ul class="list-disc ml-2 pl-5 space-y-1">
+          <li>
+            <span class="font-semibold">Reviewing Answers: </span>You can
+            navigate through all questions and change your selected options at
+            any time before final submission.
+          </li>
+          <li>
+            <span class="font-semibold">Progress Tracking: </span>Use the "Test
+            Stats" panel on the right to see how many questions are attempted
+            and how many are remaining.
+          </li>
+          <li>
+            <span class="font-semibold">Final Submission: </span>Once you have
+            answered all questions, click the "Submit Test" button. You will be
+            asked for a final confirmation before the test ends.
+          </li>
+        </ul>
+
+        <h4 class="font-semibold text-lg mt-4">Technical Requirements:-</h4>
+        <ul class="list-disc ml-2 pl-5 space-y-1">
+          <li>Ensure you have a stable internet connection.</li>
+          <li>
+            Do not click the browser’s "Back" or "Refresh" buttons, as this may
+            result in a loss of data.
+          </li>
+          <li>
+            If you face any technical issues, do not close the portal. Contact
+            the Technical Support Team immediately via email or contact number
+            provided in the Right side Panel.
+          </li>
+        </ul>
+      </article>
+
+      <div class="flex flex-row justify-start items-center gap-2 mt-8">
+        <button
+          id="allowCameraBtn"
+          class="border border-purple-600 hover:bg-purple-500 active:scale-95 hover:text-white active:text-white font-semibold text-base text-center rounded-md shadow-md px-4 py-1 transition flex items-center gap-2"
+        >
+          <svg
+            class="w-6 h-6"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 640 640"
+          >
+            <path
+              d="M128 128C92.7 128 64 156.7 64 192L64 448C64 483.3 92.7 512 128 512L384 512C419.3 512 448 483.3 448 448L448 192C448 156.7 419.3 128 384 128L128 128zM496 400L569.5 458.8C573.7 462.2 578.9 464 584.3 464C597.4 464 608 453.4 608 440.3L608 199.7C608 186.6 597.4 176 584.3 176C578.9 176 573.7 177.8 569.5 181.2L496 240L496 400z"
+            />
+          </svg>
+          Allow Camera Access
+        </button>
+      </div>
+
+      <div class="flex flex-row justify-center items-center gap-2 mt-8">
+        <input
+          type="checkbox"
+          id="instructionsAgreeCheckbox"
+          class="cursor-pointer accent-purple-500 w-4 h-4"
+        />
+        <label
+          >I have read and understood all the instructions. I agree to abide by
+          the rules of JET 2026.</label
+        >
+      </div>
+
+      <div class="flex flex-row justify-center items-center mt-4">
+        <button
+          id="startExamBtn"
+          class="bg-purple-600 hover:bg-purple-500 active:scale-95 text-white font-semibold text-lg text-center rounded-md shadow-md px-6 py-1 opacity-50 cursor-not-allowed transition"
+          disabled
+        >
+          Start Exam
+        </button>
+      </div>
+    </section>
+
+    <!-- Test body -->
+
+    <main
+      id="examScreen"
+      class="max-w-screen-xl w-full mx-auto grid grid-cols-10 m-2 gap-2 hidden"
+    >
+      <!-- test container -->
+      <section id="testContainer" class="col-span-7 ml-2 p-4"></section>
+
+      <!-- info container -->
+      <div
+        class="flex justify-center items-center min-h-[calc(100vh-128px)] max-h-[calc(100vh-128px)] col-span-3 sticky top-[120px]"
+      >
+        <section
+          id="infoContainer"
+          style="
+            font-family:
+              &quot;Segoe UI&quot;, Tahoma, Geneva, Verdana, sans-serif;
+          "
+          class="h-[calc(100vh-128px)] max-h-[600px] bg-purple-200 p-4 shadow-lg rounded-md mr-2 text-sm text-gray-700 flex flex-col justify-around w-full"
+        >
+          <section
+            class="flex flex-row justify-start items-center gap-1 text-black font-semibold"
+          >
+            <span class="relative flex h-3 w-3 mr-2">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"
+              ></span>
+
+              <span
+                class="relative inline-flex rounded-full h-3 w-3 bg-red-600"
+              ></span>
+            </span>
+            <p class="text-base">Live Proctoring: ON</p>
+          </section>
+          <section
+            id="timerContainer"
+            class="flex justify-center items-center gap-1 p-2"
+          >
+            <p
+              id="timer"
+              class="font-semibold text-2xl shadow-xl rounded-md p-2 bg-purple-200 ring-1 ring-purple-500 ring-offset-1"
+            >
+              <span id="hours">00</span>:<span id="minutes">00</span>:<span
+                id="seconds"
+                >00</span
+              >
+            </p>
+          </section>
+          <section
+            id="studentDetails"
+            class="flex flex-col justify-start items-start gap-1"
+          >
+            <p class="font-semibold text-lg underline text-black">
+              Applicant Details:
+            </p>
+            <p class="font-semibold">
+              Name: <span id="nameTag" class="font-normal"></span>
+            </p>
+            <p class="font-semibold">
+              Application ID:
+              <span id="applicationIdTag" class="font-normal"></span>
+            </p>
+            <p class="font-semibold">
+              Email ID: <span id="emailIdTag" class="font-normal"></span>
+            </p>
+            <p class="font-semibold">
+              Place: <span id="placeTag" class="font-normal"></span>
+            </p>
+          </section>
+          <hr class="border-gray-400 border mx-2" />
+          <section
+            id="testDetails"
+            class="flex flex-col justify-start items-start gap-1"
+          >
+            <p class="font-semibold text-lg underline text-black">
+              Test Details:
+            </p>
+            <p class="font-semibold">
+              Subject:
+              <span id="subjectTag" class="font-normal"></span>
+            </p>
+            <p class="font-semibold">
+              Total Marks: <span id="marksTag" class="font-normal"></span>
+            </p>
+            <p class="font-semibold">
+              Time: <span id="timeTag" class="font-normal"></span>
+            </p>
+          </section>
+          <hr class="border-gray-400 border mx-2" />
+          <section
+            id="testStats"
+            class="flex flex-col justify-start items-start gap-1"
+          >
+            <p class="font-semibold text-lg underline text-black">
+              Test Stats:
+            </p>
+            <p class="font-semibold">
+              Total: <span id="totalTag" class="font-normal"></span>
+            </p>
+            <p class="font-semibold">
+              Attempted: <span id="attemptedTag" class="font-normal"></span>
+            </p>
+            <p class="font-semibold">
+              Remaining: <span id="remainingTag" class="font-normal"></span>
+            </p>
+          </section>
+        </section>
+      </div>
+    </main>
+    <div
+      id="modalOverlay"
+      class="fixed inset-x-0 top-[112px] h-[calc(100vh-112px)] bg-black/60 flex justify-center items-center z-10 hidden"
+    >
+      <section
+        id="submitModal"
+        class="bg-purple-200 rounded-lg shadow-lg z-20 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 w-[90%] max-w-md flex flex-col justify-center items-center gap-4"
+      >
+        <h2 class="text-2xl font-bold text-black">Confirm Submission</h2>
+        <hr class="border-black border shadow-md w-full" />
+        <section
+          id="finalStatsContainer"
+          class="flex flex-col justify-center items-start self-start gap-1"
+        >
+          <p class="text-gray-800 text-center">
+            You are about to submit your test. Please review your stats before
+            confirming.
+          </p>
+          <p class="font-semibold text-black text-lg underline">
+            Final Stats Review
+          </p>
+          <p class="font-semibold text-black text-sm">
+            Total Questions:
+            <span id="finalTotalTag" class="font-normal text-gray-700"></span>
+          </p>
+          <p class="font-semibold text-black text-sm">
+            Attempted:
+            <span
+              id="finalAttemptedTag"
+              class="font-normal text-gray-700"
+            ></span>
+          </p>
+          <p class="font-semibold text-black text-sm">
+            Remaining:
+            <span
+              id="finalRemainingTag"
+              class="font-normal text-gray-700"
+            ></span>
+          </p>
+        </section>
+
+        <div class="flex justify-center items-center gap-4">
+          <button
+            id="confirmSubmitBtn"
+            class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-500 active:scale-95 transition shadow-md"
+          >
+            Confirm Submit
+          </button>
+          <button
+            id="reviewAgainBtn"
+            class="px-4 py-2 border border-purple-600 text-black rounded hover:bg-purple-500 hover:text-white active:scale-95 transition shadow-md"
+          >
+            Review Again
+          </button>
+        </div>
+      </section>
+    </div>
+    <section
+      id="completionScreen"
+      class="flex flex-col justify-center items-center gap-2 w-full h-[calc(100vh-112px)] hidden"
+    >
+      <div class="w-2/3 flex flex-col justify-center items-start gap-2">
+        <img
+          src="../src/party popper icon.png"
+          alt="party popper"
+          class="w-32 h-32 drop-shadow-lg"
+        />
+        <h2 class="text-4xl font-bold drop-shadow-md">Congratulations!</h2>
+        <p class="text-xl font-semibold">
+          JET (JIBA Entrance Test) successfully completed.
+        </p>
+        <p class="text-md-start">
+          Your responses have been securely recorded and a formal
+          acknowledgement of your submission will be sent to your registered
+          email shortly.
+        </p>
+        <p class="text-md-start">
+          Your test score and admission shortlist status will be officially
+          communicated to your registered email address. Candidates are advised
+          to monitor their emails regularly over the next few days.
+        </p>
+        <p class="text-md-start">
+          You may now safely close this browser window and exit the portal.
+        </p>
+        <p class="text-md-start font-semibold">
+          Thank you for choosing JIBA. We wish you the very best for your
+          results.
+        </p>
+      </div>
+    </section>
+
+    <!-- violation modal -->
+    <div
+      id="warningModal"
+      class="fixed inset-0 bg-black bg-opacity-80 z-50 flex justify-center items-center hidden"
+    >
+      <div
+        class="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full text-center border-t-4 border-red-600"
+      >
+        <div class="text-5xl mb-4">🚨</div>
+        <h2 class="text-2xl font-bold text-red-600 mb-2">VIOLATION DETECTED</h2>
+        <p class="text-gray-700 font-semibold mb-2">
+          You have exited full-screen mode.
+        </p>
+        <p id="violationText" class="text-gray-600 mb-6"></p>
+
+        <button
+          id="returnToExamBtn"
+          class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-md w-full transition active:scale-95"
+        >
+          Acknowledge & Return to Exam
+        </button>
+      </div>
+    </div>
+    <video
+      id="proctorVideo"
+      class="fixed top-0 left-0 w-1 h-1 opacity-0 -z-50 pointer-events-none"
+      autoplay
+    ></video>
+    <canvas id="proctorCanvas" class="hidden"></canvas>
+  </body>
+</html>
