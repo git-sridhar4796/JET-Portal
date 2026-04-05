@@ -584,10 +584,10 @@ const updateStudentData = (name, appId, email, contact, place, examType) => {
 // login form submission
 const loginForm = document.getElementById("loginForm");
 loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
   if (!loginForm.checkValidity()) {
     return;
   }
-  e.preventDefault();
   // get form values
   const nameInput = document.getElementById("nameInput").value;
   const applicationIdInput =
