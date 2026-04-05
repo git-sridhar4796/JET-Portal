@@ -2,8 +2,6 @@
 // UPDATE DOM ELEMENTS
 // ----------------------
 
-const { random } = require("nanoid");
-
 // portal screen DOM elements
 const loginScreen = document.getElementById("loginScreen");
 const instructionsScreen = document.getElementById("instructionsScreen");
