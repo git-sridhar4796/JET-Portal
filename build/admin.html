@@ -333,6 +333,43 @@
         >
           <div
             id="questionSetTable"
+            class="w-2/3 border border-gray-400 shadow-inner bg-white rounded-md flex flex-col overflow-hidden max-h-[400px] mb-4"
+          >
+            <div class="overflow-y-auto w-full">
+              <table class="w-full border-collapse">
+                <thead class="sticky top-0 z-10 bg-purple-200 shadow-sm">
+                  <tr>
+                    <th class="py-2 px-1 border-r-2 border-gray-100">S.No.</th>
+                    <th class="py-2 px-1 border-r-2 border-gray-100">
+                      Set Name
+                    </th>
+                    <th class="py-2 px-1 border-r-2 border-gray-100">
+                      Question Count
+                    </th>
+                    <th class="py-2 px-1 border-r-2 border-gray-100">
+                      Upload Date
+                    </th>
+                    <th class="py-2 px-1 border-r-2 border-gray-100">
+                      Uploaded By
+                    </th>
+                    <th class="py-2 px-1">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="questionSets">
+                  <tr id="questionSetTablePlaceholder">
+                    <td
+                      colspan="6"
+                      class="text-center py-10 text-gray-500 italic"
+                    >
+                      No question sets uploaded yet. Click above to upload.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- <div
+            id="questionSetTable"
             class="w-2/3 h-full border border-gray-400 shadow-inner bg-white rounded-md overflow-y-auto"
           >
             <table class="w-full">
@@ -355,7 +392,7 @@
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div> -->
         </section>
       </section>
       <!-- Student Stats screen -->

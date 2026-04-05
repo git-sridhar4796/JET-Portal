@@ -2,6 +2,8 @@
 // UPDATE DOM ELEMENTS
 // ----------------------
 
+const { random } = require("nanoid");
+
 // portal screen DOM elements
 const loginScreen = document.getElementById("loginScreen");
 const instructionsScreen = document.getElementById("instructionsScreen");
@@ -36,12 +38,17 @@ const reviewAgainBtn = document.getElementById("reviewAgainBtn");
 const proctorVideo = document.getElementById("proctorVideo");
 const proctorCanvas = document.getElementById("proctorCanvas");
 const allowCameraBtn = document.getElementById("allowCameraBtn");
+const cameraModal = document.getElementById("cameraModal");
+const modalVideo = document.getElementById("modalVideo");
+const confirmCameraAccessBtn = document.getElementById(
+  "confirmCameraAccessBtn",
+);
 
 // testing toggles
-// loginScreen.classList.add("hidden");
+// loginScreen.classList.remove("hidden");
 // instructionsScreen.classList.add("hidden");
 // completionScreen.classList.add("hidden");
-// examScreen.classList.remove("hidden");
+// examScreen.classList.add("hidden");
 
 // global variables
 let totalTime = 0; // hold total time in seconds globally
@@ -83,7 +90,6 @@ async function fetchExamData() {
       throw new Error("Network response was not ok.");
     }
     masterExamData = await response.json();
-    prepareExamInfo();
   } catch (error) {
     console.error("Failed to load data from database", error);
   }
@@ -103,13 +109,25 @@ const shuffle = (array) => {
 // ----------------------------
 let activeExamSet = null;
 const prepareExamInfo = () => {
-  const randomSet = Math.floor(Math.random() * masterExamData.length);
-  activeExamSet = masterExamData[randomSet];
-  shuffle(activeExamSet);
+  const matchingSets = masterExamData.filter(
+    (set) => set.examType.trim() === studentData.examType.trim(),
+  );
+
+  if (matchingSets.length === 0) {
+    alert(
+      `No question sets found for ${studentData.examType}. Please contact support.`,
+    );
+    return;
+  }
+
+  const randomSet = Math.floor(Math.random() * matchingSets.length);
+  activeExamSet = matchingSets[randomSet];
+  shuffle(activeExamSet.questions);
   // update test details
-  subjectTag.textContent = activeExamSet.testName;
+  subjectTag.textContent =
+    activeExamSet.testName + " " + activeExamSet.examType;
   marksTag.textContent = activeExamSet.totalMarks;
-  totalTime = activeExamSet.duration * 60 * 60; // convert hours to seconds
+  totalTime = activeExamSet.duration * 60; // convert minutes to seconds
   if (activeExamSet.duration <= 60) {
     timeTag.textContent =
       activeExamSet.duration / 60 +
@@ -125,7 +143,7 @@ const prepareExamInfo = () => {
       activeExamSet.duration +
       " minutes)";
   }
-  const totalQuestions = activeExamSet.totalMarks;
+  const totalQuestions = activeExamSet.questions.length;
   totalTag.textContent = totalQuestions;
   attemptedTag.textContent = 0;
   remainingTag.textContent = totalQuestions;
@@ -300,7 +318,7 @@ const hideModal = () => {
 // confirm submit function
 const confirmSubmit = async () => {
   clearInterval(timerInterval); // stop the timer
-  clearInterval(proctorInterval); // stop the snapshot
+  clearInterval(proctorTimeout); // stop the snapshot
   // stop video
   const stream = proctorVideo.srcObject;
   if (stream) {
@@ -383,43 +401,43 @@ const triggerViolation = (reason) => {
 // camera monitoring via screenshots
 const proctoringUrl =
   "https://script.google.com/macros/s/AKfycbyy_Hyk8p9vm8tbaySBJ1J-W0Iba29CjVMhcnvolrFGZewlO9J8ajgf8gk36VXsop63/exec";
-let proctorInterval;
+let proctorTimeout;
 let isCameraVerified = false;
 
-const initCamera = async () => {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    if (stream) {
-      proctorVideo.srcObject = stream;
-      isCameraVerified = true;
-      return true;
-    }
-  } catch (error) {
-    alert(
-      "Access to camera is required for taking the exam. Kindly allow access.",
-    );
-    return false;
-  }
-};
-
 allowCameraBtn.addEventListener("click", async () => {
-  const checkCamera = await initCamera();
-  if (checkCamera) {
-    allowCameraBtn.textContent = "Camera Verified ✓";
-    allowCameraBtn.classList.remove(
-      "border-purple-600",
-      "hover:bg-purple-500",
-      "active:scale-95",
-      "hover:text-white",
-    );
-    allowCameraBtn.classList.add(
-      "bg-green-500",
-      "cursor-default",
-      "text-black",
-    );
-    allowCameraBtn.disabled = true;
-    checkStartExamStatus();
+  cameraModal.classList.remove("hidden");
+
+  try {
+    // Camera access request
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+    // Assign the stream to the MODAL video element
+    modalVideo.srcObject = stream;
+
+    // Assign to background proctoring video
+    proctorVideo.srcObject = stream;
+
+    console.log("Camera stream started in modal.");
+  } catch (error) {
+    console.error("Camera Access Error:", error);
+    alert("Camera access is required. Please check your browser permissions.");
+    cameraModal.classList.add("hidden");
   }
+});
+
+confirmCameraAccessBtn.addEventListener("click", () => {
+  isCameraVerified = true;
+  cameraModal.classList.add("hidden");
+  allowCameraBtn.textContent = "Camera Verified ✓";
+  allowCameraBtn.classList.remove(
+    "border-purple-600",
+    "hover:bg-purple-500",
+    "active:scale-95",
+    "hover:text-white",
+  );
+  allowCameraBtn.classList.add("bg-green-500", "cursor-default", "text-black");
+  allowCameraBtn.disabled = true;
+  checkStartExamStatus();
 });
 
 const takeSnapshot = async () => {
@@ -462,9 +480,16 @@ const takeSnapshot = async () => {
   }
 };
 
+const scheduleRandomSnapshot = () => {
+  takeSnapshot();
+  const randomInterval = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
+  proctorTimeout = setTimeout(scheduleRandomSnapshot, randomInterval);
+};
+
 const startProctoring = () => {
   enterFullScreen();
-  proctorInterval = setInterval(takeSnapshot, 30000);
+  scheduleRandomSnapshot();
+  // proctorInterval = setInterval(takeSnapshot, 30000);
   // Tab switching or minimizing
   document.addEventListener("visibilitychange", () => {
     if (
@@ -540,12 +565,13 @@ returnToExamBtn.addEventListener("click", () => {
 });
 
 // update student data function
-const updateStudentData = (name, appId, email, contact, place) => {
+const updateStudentData = (name, appId, email, contact, place, examType) => {
   studentData.name = name;
   studentData.applicationId = appId;
   studentData.emailId = email;
   studentData.contact = contact;
   studentData.place = place;
+  studentData.examType = examType;
   studentData.date = new Date().toLocaleString();
   studentData.status = "Pending";
   studentData.violationCount = 0;
@@ -569,6 +595,7 @@ loginForm.addEventListener("submit", (e) => {
   const emailIdInput = document.getElementById("emailIdInput").value;
   const contactInput = document.getElementById("contactInput").value;
   const placeInput = document.getElementById("placeInput").value;
+  const examType = document.getElementById("examTypeSelect").value;
 
   // update applicant details
   nameTag.textContent = nameInput;
@@ -587,7 +614,9 @@ loginForm.addEventListener("submit", (e) => {
     emailIdInput,
     contactInput,
     placeInput,
+    examType,
   );
+  prepareExamInfo();
   console.log(studentData);
 });
 

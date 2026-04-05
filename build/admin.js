@@ -129,10 +129,11 @@ function processExcelData(rows) {
   try {
     // Extract Metadata from Row 2 (Index 1)
     const testName = rows[1][0]; // "JET 2026"
-    const questionSet = rows[1][1]; // "1"
-    const totalMarks = rows[1][2]; // 50
-    const duration = rows[1][3]; // 60
-    const totalQns = rows[1][4]; // 50
+    const examType = rows[1][1]; // exam type
+    const questionSet = rows[1][2]; // "1"
+    const totalMarks = rows[1][3]; // 50
+    const duration = rows[1][4]; // 60
+    const totalQns = rows[1][5]; // 50
 
     // Extract Questions starting from Row 5 (Index 4)
     // Filters out empty rows to prevent undefined data
@@ -142,6 +143,7 @@ function processExcelData(rows) {
 
     const examData = {
       testName: testName,
+      examType: examType,
       setID: questionSet,
       totalMarks: totalMarks,
       duration: duration,
@@ -155,9 +157,6 @@ function processExcelData(rows) {
     };
 
     console.log("Successfully Parsed Exam Set:", examData);
-
-    // Notice we do NOT update the table here anymore.
-    // We send it to Google first, and let the Modal handle the table update.
     saveToGoogleSheets(examData);
   } catch (error) {
     console.error("Data Extraction Error:", error);
@@ -188,10 +187,13 @@ function updateQuestionBankTable(data) {
   const tr = document.createElement("tr");
   tr.className = "border-b text-sm text-center bg-white hover:bg-gray-50";
 
+  const displayExamType = data.examType || "N/A";
+  const displayCount =
+    data.questionCount || (data.questions ? data.questions.length : 0);
   tr.innerHTML = `
     <td class="py-2 border-r-2 border-gray-100">${serialNumber}</td>
-    <td class="py-2 border-r-2 border-gray-100 font-medium">${data.testName} - Set ${data.setID}</td>
-    <td class="py-2 border-r-2 border-gray-100">${data.questions.length}</td>
+    <td class="py-2 border-r-2 border-gray-100 font-medium">${data.testName} - ${displayExamType} - Set ${data.setID}</td>
+    <td class="py-2 border-r-2 border-gray-100">${displayCount}</td>
     <td class="py-2 border-r-2 border-gray-100">${today}</td>
     <td class="py-2 border-r-2 border-gray-100">Sridhar</td>
     <td class="py-2">
@@ -334,7 +336,7 @@ async function saveToGoogleSheets(examData) {
       // 3. Show the Success Modal, and pass the table update function inside the callback
       showModal(
         "success",
-        `Success! ${examData.testName} - Set ${examData.setID} has been permanently saved.`,
+        `Success! ${examData.testName} - ${examData.examType}- Set ${examData.setID} has been permanently saved.`,
         () => {
           updateQuestionBankTable(examData); // This runs ONLY when "OK" is clicked
         },
@@ -358,7 +360,7 @@ async function saveToGoogleSheets(examData) {
 // -----------------------------
 // DELETE FROM DATABASE LOGIC
 // -----------------------------
-async function deleteFromGoogleSheets(testName, setID, trElement) {
+async function deleteFromGoogleSheets(testName, examType, setID, trElement) {
   const SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbxZJ5GQRN_rvcL1b5gpbple_9QUdEJKKNBJ5PtYlp55fCnLsCCgQAAIJFhZGBngkez7nA/exec";
 
@@ -375,6 +377,7 @@ async function deleteFromGoogleSheets(testName, setID, trElement) {
       body: JSON.stringify({
         action: "delete", // This tells the Apps Script which logic block to run
         testName: testName,
+        examType: examType,
         setID: String(setID),
       }),
     });
@@ -435,7 +438,7 @@ async function loadExistingSets() {
 
         tr.innerHTML = `
           <td class="py-2 border-r-2 border-gray-100">${index + 1}</td>
-          <td class="py-2 border-r-2 border-gray-100 font-medium">${data.testName} - Set ${data.setID}</td>
+          <td class="py-2 border-r-2 border-gray-100 font-medium">${data.testName} - ${data.examType} - Set ${data.setID}</td>
           <td class="py-2 border-r-2 border-gray-100">${data.questionCount}</td>
           <td class="py-2 border-r-2 border-gray-100">${today}</td>
           <td class="py-2 border-r-2 border-gray-100">Sridhar</td>
@@ -449,10 +452,15 @@ async function loadExistingSets() {
         deleteBtn.addEventListener("click", function () {
           showModal(
             "confirm",
-            `Are you sure you want to permanently remove ${data.testName} - Set ${data.setID}?`,
+            `Are you sure you want to permanently remove ${data.testName} - ${data.examType} - Set ${data.setID}?`,
             () => {
               // Run the backend delete function (which will handle the UI removal if successful)
-              deleteFromGoogleSheets(data.testName, data.setID, tr);
+              deleteFromGoogleSheets(
+                data.testName,
+                data.examType,
+                data.setID,
+                tr,
+              );
             },
           );
         });
