@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="style.css" />
     <script src="./admin.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
   </head>
   <body class="bg-purple-100" style="font-family: Arial, Helvetica, sans-serif">
     <!-- Branding and title -->
     <header class="bg-purple-800 p-4 sticky top-0 shadow-2xl z-50">
-      <div
-        class="max-w-screen-xl mx-auto w-full flex justify-between items-center"
-      >
+      <div class="w-full flex justify-between items-center">
         <section
           id="branding"
           class="flex justify-center items-center"
@@ -47,7 +47,7 @@
     <!-- Sidebar -->
     <aside
       id="adminSidebar"
-      class="fixed left-0 top-[112px] bg-purple-400 shadow-md z-20 flex flex-col justify-between items-start gap-2 h-[calc(100vh-112px)] hover:w-48 w-14 transition-all duration-300 overflow-hidden group-[]:"
+      class="fixed left-0 top-[112px] bg-purple-400 shadow-md z-20 flex flex-col justify-between items-start gap-2 h-[calc(100vh-112px)] hover:w-48 w-14 transition-all duration-300 overflow-hidden group-[]: hidden"
     >
       <section class="flex flex-col justify-center items-start w-full">
         <section
@@ -121,7 +121,7 @@
           viewBox="0 0 640 640"
         >
           <path
-            d="M352 64C352 46.3 337.7 32 320 32C302.3 32 288 46.3 288 64L288 320C288 337.7 302.3 352 320 352C337.7 352 352 337.7 352 320L352 64zM210.3 162.4C224.8 152.3 228.3 132.3 218.2 117.8C208.1 103.3 188.1 99.8 173.6 109.9C107.4 156.1 64 233 64 320C64 461.4 178.6 576 320 576C461.4 576 576 461.4 576 320C576 233 532.6 156.1 466.3 109.9C451.8 99.8 431.9 103.3 421.7 117.8C411.5 132.3 415.1 152.2 429.6 162.4C479.4 197.2 511.9 254.8 511.9 320C511.9 426 425.9 512 319.9 512C213.9 512 128 426 128 320C128 254.8 160.5 197.1 210.3 162.4z"
+            d="M470.5 463.6C451.4 416.9 405.5 384 352 384L288 384C234.5 384 188.6 416.9 169.5 463.6C133.9 426.3 112 375.7 112 320C112 205.1 205.1 112 320 112C434.9 112 528 205.1 528 320C528 375.7 506.1 426.2 470.5 463.6zM430.4 496.3C398.4 516.4 360.6 528 320 528C279.4 528 241.6 516.4 209.5 496.3C216.8 459.6 249.2 432 288 432L352 432C390.8 432 423.2 459.6 430.5 496.3zM320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM320 304C297.9 304 280 286.1 280 264C280 241.9 297.9 224 320 224C342.1 224 360 241.9 360 264C360 286.1 342.1 304 320 304zM232 264C232 312.6 271.4 352 320 352C368.6 352 408 312.6 408 264C408 215.4 368.6 176 320 176C271.4 176 232 215.4 232 264z"
           />
         </svg>
         <p class="whitespace-nowrap">Profile</p>
@@ -130,7 +130,8 @@
 
     <!-- Current screen & welcome admin bar -->
     <section
-      class="top-[112px] p-2 bg-purple-300 flex flex-row justify-between items-center gap-2 w-[calc(100%-56px)] ml-14"
+      id="welcomeAdminBar"
+      class="top-[112px] p-2 bg-purple-300 flex flex-row justify-between items-center gap-2 w-[calc(100%-56px)] ml-14 hidden"
     >
       <div class="flex flex-row items-center gap-1">
         <svg
@@ -162,12 +163,305 @@
       <!-- Dashboard screen -->
       <section
         id="dashboardScreen"
-        class="h-[calc(100vh-192px)] flex flex-col hidden"
-      ></section>
+        class="h-[calc(100vh-192px)] flex flex-col gap-4 p-2 hidden"
+      >
+        <!-- Row 1 - Test Stats -->
+        <div class="grid grid-cols-4 gap-4 flex-1 max-h-[250px]">
+          <div
+            class="bg-white text-black rounded-lg shadow-md flex flex-col justify-between items-center gap-2 p-4 col-span-1"
+          >
+            <div
+              class="flex flex-row justify-between items-center gap-4 w-full"
+            >
+              <p class="font-semibold text-gray-600 self-start 2xl:text-xl">
+                Tests Completed
+              </p>
+              <select
+                name="testCompletedDateSelect"
+                id="testCompletedDateSelect"
+                class="self-end rounded-md border border-black p-1 outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer text-sm"
+              >
+                <option value="allTime">All Time</option>
+                <option value="lastMonth">Last Month</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="today">Today</option>
+              </select>
+            </div>
+            <p
+              id="testCompletedCount"
+              class="text-6xl 2xl:text-9xl self-center font-bold text-purple-800"
+            >
+              0
+            </p>
+            <p></p>
+          </div>
+          <div
+            class="bg-white text-black rounded-lg shadow-md flex flex-col justify-between items-center gap-2 p-4 col-span-1"
+          >
+            <p class="font-semibold text-gray-600 self-start 2xl:text-xl">
+              Test Type Distribution
+            </p>
+            <div class="w-full mt-4">
+              <div
+                class="w-full bg-gray-100 h-4 2xl:h-6 rounded-full flex overflow-hidden shadow-inner"
+              >
+                <div
+                  id="entranceBar"
+                  class="bg-purple-500 h-full transition-all duration-700"
+                  style="width: 0%"
+                ></div>
+                <div
+                  id="scholarshipBar"
+                  class="bg-purple-300 h-full transition-all duration-700"
+                  style="width: 0%"
+                ></div>
+              </div>
+
+              <div class="flex justify-between mt-3 px-1">
+                <div class="flex items-center gap-1">
+                  <div
+                    class="w-2 h-2 2xl:w-4 2xl:h-4 rounded-full bg-purple-500"
+                  ></div>
+                  <span class="text-sm text-gray-600 2xl:text-lg"
+                    >Entrance:
+                    <span id="entranceCountText" class="font-bold text-black"
+                      >0</span
+                    ></span
+                  >
+                </div>
+                <div class="flex items-center gap-1">
+                  <div
+                    class="w-2 h-2 2xl:w-4 2xl:h-4 rounded-full bg-purple-300"
+                  ></div>
+                  <span class="text-sm text-gray-600 2xl:text-lg"
+                    >Scholarship:
+                    <span id="scholarshipCountText" class="font-bold text-black"
+                      >0</span
+                    ></span
+                  >
+                </div>
+              </div>
+            </div>
+            <p></p>
+          </div>
+          <div
+            class="bg-white text-black rounded-lg shadow-md flex flex-col justify-between items-center gap-2 p-4 w-full col-span-1"
+          >
+            <p class="font-semibold text-gray-600 self-start 2xl:text-xl">
+              Pass / Fail Percentage
+            </p>
+            <div class="w-full">
+              <div class="flex justify-between text-xs mb-1 2xl:text-base">
+                <span>Pass</span>
+                <span id="passText">0%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 2xl:h-5">
+                <div
+                  id="passPercentBar"
+                  class="bg-green-500 h-2.5 2xl:h-5 rounded-full transition-all duration-500"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex justify-between text-xs mb-1 2xl:text-base">
+                <span>Fail</span>
+                <span id="failText">0%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 2xl:h-5">
+                <div
+                  id="failPercentBar"
+                  class="bg-red-500 h-2.5 2xl:h-5 rounded-full transition-all duration-500"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+            <p></p>
+          </div>
+          <div
+            class="bg-white text-black rounded-lg shadow-md flex flex-col justify-between items-center gap-2 p-4 w-full col-span-1"
+          >
+            <p class="font-semibold text-gray-600 self-start 2xl:text-xl">
+              Average Score
+            </p>
+            <p
+              id="averageScoreText"
+              class="text-6xl 2xl:text-9xl self-center font-bold text-purple-800"
+            >
+              0 <span class="text-gray-500 text-lg 2xl:text-3xl">/ 30</span>
+            </p>
+            <p></p>
+          </div>
+        </div>
+        <!-- Row 2 - Proctor Stats -->
+        <div class="grid grid-cols-3 gap-4 flex-1 max-h-[350px]">
+          <div
+            class="bg-white text-black rounded-lg shadow-md flex flex-col justify-between items-center gap-2 p-4 w-full col-span-2"
+          >
+            <p class="font-semibold text-gray-600 self-start 2xl:text-xl">
+              Proctoring Status
+            </p>
+            <div class="flex flex-row justify-around items-center gap-4 w-full">
+              <div class="w-1/3 aspect-square max-w-[200px] 2xl:max-w-[250px]">
+                <canvas id="proctorChartCanvas"></canvas>
+              </div>
+              <div class="flex flex-col justify-center items-start gap-2">
+                <p
+                  class="text-sm 2xl:text-xl font-bold border-b 2xl:border-b-2 border-gray-200 pb-1 mb-1 w-full text-purple-800"
+                >
+                  Total: <span id="totalText">0</span>
+                </p>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                  <p class="text-xs 2xl:text-lg">
+                    Validated:
+                    <span id="validatedText" class="font-semibold">0</span>
+                  </p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                  <p class="text-xs 2xl:text-lg">
+                    Invalidated:
+                    <span id="invalidatedText" class="font-semibold">0</span>
+                  </p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full bg-gray-200"></div>
+                  <p class="text-xs 2xl:text-lg">
+                    Review Pending:
+                    <span id="reviewPendingText" class="font-semibold">0</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p></p>
+          </div>
+          <div
+            class="bg-white text-black rounded-lg shadow-md flex flex-col justify-between items-center gap-2 p-4 w-full col-span-1"
+          >
+            <div
+              class="flex flex-row justify-start items-center gap-2 self-start"
+            >
+              <div class="bg-red-500 rounded-full w-3 h-3 animate-pulse"></div>
+              <p class="font-semibold text-gray-600 self-start 2xl:text-xl">
+                Active Now
+              </p>
+            </div>
+            <p
+              id="activeNowCount"
+              class="text-6xl 2xl:text-9xl self-center font-bold text-purple-800"
+            >
+              0
+            </p>
+            <p class="text-sm 2xl:text-lg text-gray-500 italic">
+              Live Portal Pulse
+            </p>
+          </div>
+        </div>
+        <!-- Leaderboard Row -->
+        <div
+          class="flex-1 flex flex-col gap-2 max-h-[400px] bg-white rounded-lg shadow-md p-4"
+        >
+          <div class="flex justify-between items-center px-2">
+            <h2
+              class="text-sm font-bold text-gray-500 uppercase tracking-wider"
+            >
+              Top Performers
+            </h2>
+            <div class="flex gap-2">
+              <select
+                id="leaderboardTypeFilter"
+                class="text-sm border border-gray-300 rounded-md p-1 outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer bg-white"
+              >
+                <option value="all">All Tests</option>
+                <option value="entrance">Entrance Only</option>
+                <option value="scholarship">Scholarship Only</option>
+              </select>
+              <select
+                id="leaderboardDateFilter"
+                class="text-sm border border-gray-300 rounded-md p-1 outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer bg-white font-semibold"
+              >
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="week">Last Week</option>
+                <option value="month">Last Month</option>
+                <option value="all" selected>All Time</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-6 flex-1 items-end pb-2 p-4">
+            <div
+              class="bg-purple-100 border-b-4 border-gray-300 rounded-lg shadow-md flex flex-col justify-center items-center p-4 h-[90%] relative"
+            >
+              <span class="absolute top-2 left-2 text-xl 2xl:text-3xl">🥈</span>
+              <h3
+                id="rank2Name"
+                class="text-lg font-bold text-gray-800 text-center truncate w-full"
+              >
+                ---
+              </h3>
+              <p id="rank2Score" class="text-5xl font-black text-gray-400">
+                00
+              </p>
+              <p
+                id="rank2Type"
+                class="text-[9px] font-bold text-gray-400 uppercase mt-1"
+              >
+                ---
+              </p>
+            </div>
+
+            <div
+              class="bg-purple-100 border-b-4 border-yellow-400 rounded-lg shadow-xl flex flex-col justify-center items-center p-4 h-[100%] relative z-10"
+            >
+              <span class="absolute top-2 left-2 text-2xl 2xl:text-4xl"
+                >🏆</span
+              >
+              <h3
+                id="rank1Name"
+                class="text-xl font-black text-purple-900 text-center truncate w-full uppercase"
+              >
+                ---
+              </h3>
+              <p id="rank1Score" class="text-7xl font-black text-yellow-500">
+                00
+              </p>
+              <p
+                id="rank1Type"
+                class="text-[9px] font-bold text-yellow-600 uppercase mt-1"
+              >
+                ---
+              </p>
+            </div>
+
+            <div
+              class="bg-purple-100 border-b-4 border-orange-300 rounded-lg shadow-md flex flex-col justify-center items-center p-4 h-[80%] relative"
+            >
+              <span class="absolute top-2 left-2 text-xl 2xl:text-3xl">🥉</span>
+              <h3
+                id="rank3Name"
+                class="text-lg font-bold text-gray-800 text-center truncate w-full"
+              >
+                ---
+              </h3>
+              <p id="rank3Score" class="text-5xl font-black text-orange-400">
+                00
+              </p>
+              <p
+                id="rank3Type"
+                class="text-[9px] font-bold text-gray-400 uppercase mt-1"
+              >
+                ---
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
       <!-- Proctoring screen -->
       <section
         id="proctoringScreen"
-        class="h-[calc(100vh-192px)] flex flex-col gap-2"
+        class="h-[calc(100vh-192px)] flex flex-col gap-2 hidden"
       >
         <!-- Global Date Filter -->
         <section class="flex flex-row justify-end items-center p-1 text-sm">
@@ -223,19 +517,13 @@
           <section
             id="activiyLogFeed"
             class="w-1/2 p-3 bg-white rounded-md shadow-inner flex flex-col-reverse justify-start items-start gap-1 text-sm overflow-y-auto"
-          >
-            <p>Line 1</p>
-            <p>Line 2</p>
-            <p>Line 3</p>
-            <p>Line 3</p>
-            <p>Line 3</p>
-          </section>
+          ></section>
         </section>
         <!-- Needs Review -->
         <section
           class="flex flex-row justify-start items-center font-semibold px-2"
         >
-          <p>Needs Review</p>
+          <p class="place-self-center">Review Log</p>
         </section>
         <section
           class="h-full w-full p-3 bg-white rounded-md shadow-inner flex flex-col min-h-0"
@@ -245,7 +533,7 @@
               type="text"
               id="proctorSearchBar"
               class="w-1/4 rounded-md shadow-md border border-black p-1 text-xs cursor-text focus:ring-2 focus:ring-purple-400 focus:outline-none"
-              placeholder="Search ID or Name.."
+              placeholder="Search By StudentID or Name.."
             />
             <select
               name="proctorStatusFilter"
@@ -263,20 +551,22 @@
           >
             <table id="reviewTable" class="w-full text-sm text-left">
               <thead
-                class="sticky top-0 bg-purple-200 shadow-sm text-center border-b border-black"
+                class="sticky top-0 bg-purple-200 shadow-sm text-center border-b border-black z-10"
               >
                 <tr>
                   <th class="border-r border-black">Sts</th>
-                  <th class="border-r border-black">App ID</th>
+                  <th class="border-r border-black">Time</th>
+                  <th class="border-r border-black">Student ID</th>
                   <th class="border-r border-black">Name</th>
-                  <th class="border-r border-black">Status</th>
+                  <th class="border-r border-black">Exam Status</th>
                   <th class="border-r border-black">Violations</th>
+                  <th class="border-r border-black">Review Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody id="proctorTableBody">
                 <tr>
-                  <td colspan="6" class="text-center text-gray-400 pt-4">
+                  <td colspan="8" class="text-center text-gray-400 pt-4">
                     No exams match the current filter
                   </td>
                 </tr>
@@ -368,43 +658,339 @@
               </table>
             </div>
           </div>
-          <!-- <div
-            id="questionSetTable"
-            class="w-2/3 h-full border border-gray-400 shadow-inner bg-white rounded-md overflow-y-auto"
-          >
-            <table class="w-full">
-              <tr class="sticky top-0 z-10 bg-purple-200">
-                <th class="py-1 border-r-2 border-gray-100">S.No.</th>
-                <th class="py-1 border-r-2 border-gray-100">Set Name</th>
-                <th class="py-1 border-r-2 border-gray-100">Question Count</th>
-                <th class="py-1 border-r-2 border-gray-100">Upload Date</th>
-                <th class="py-1 border-r-2 border-gray-100">Uploaded By</th>
-                <th class="py-1">Actions</th>
-              </tr>
-              <tbody id="questionSets">
-                <tr id="questionSetTablePlaceholder">
-                  <td
-                    colspan="6"
-                    class="text-center py-10 text-gray-500 italic"
-                  >
-                    No question sets uploaded yet. Click above to upload.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div> -->
         </section>
       </section>
       <!-- Student Stats screen -->
       <section
         id="studentStatsScreen"
-        class="h-[calc(100vh-192px)] flex flex-col hidden"
-      ></section>
+        class="h-[calc(100vh-192px)] flex flex-col gap-4"
+      >
+        <div
+          id="statsTableView"
+          class="flex flex-col gap-4 flex-1 overflow-hidden"
+        >
+          <div class="flex flex-row justify-end items-center gap-2 w-full">
+            <input
+              type="text"
+              id="studentStatGlobalSearch"
+              class="text-sm rounded-md shadow-md p-1 outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Search by Name or StudentID"
+            />
+            <select
+              name="studentStatDateFilter"
+              id="studentStatDateFilter"
+              class="text-sm rounded-md shadow-md p-1 outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <option value="all">All Time</option>
+              <option value="lastMonth">Last Month</option>
+              <option value="lastWeek">Last Week</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="today">Today</option>
+            </select>
+            <button
+              id="exportStudentDataBtn"
+              class="bg-purple-500 hover:bg-purple-600 active:scale-95 text-white px-2 py-1 rounded-md shadow-md flex flex-row items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+                fill="currentColor"
+                class="w-7 h-7 text-white"
+              >
+                <path
+                  d="M128 128C128 92.7 156.7 64 192 64L341.5 64C358.5 64 374.8 70.7 386.8 82.7L493.3 189.3C505.3 201.3 512 217.6 512 234.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM336 122.5L336 216C336 229.3 346.7 240 360 240L453.5 240L336 122.5zM303 505C312.4 514.4 327.6 514.4 336.9 505L400.9 441C410.3 431.6 410.3 416.4 400.9 407.1C391.5 397.8 376.3 397.7 367 407.1L344 430.1L344 344C344 330.7 333.3 320 320 320C306.7 320 296 330.7 296 344L296 430.1L273 407.1C263.6 397.7 248.4 397.7 239.1 407.1C229.8 416.5 229.7 431.7 239.1 441L303.1 505z"
+                />
+              </svg>
+              Export
+            </button>
+          </div>
+          <section
+            class="flex-1 border border-gray-200 rounded-lg bg-white shadow-inner overflow-y-auto"
+          >
+            <table class="w-full text-sm text-center border-collapse">
+              <thead class="sticky top-0 bg-purple-200 shadow-sm z-10">
+                <tr>
+                  <th class="p-3 border-r border-white">Date/Time</th>
+                  <th class="p-3 border-r border-white text-left">
+                    Student Name
+                  </th>
+                  <th class="p-3 border-r border-white">Student ID</th>
+                  <th class="p-3 border-r border-white">Test Type</th>
+                  <th class="p-3 border-r border-white">Score</th>
+                  <th class="p-3 border-r border-white">Test Status</th>
+                  <th class="p-3">Proctor Status</th>
+                </tr>
+              </thead>
+              <tbody id="statsTableBody">
+                <tr>
+                  <td colspan="7" class="py-10 text-gray-400 italic">
+                    Loading student records...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+        <div
+          id="statsDetailView"
+          class="flex-1 bg-white rounded-lg shadow-md flex flex-col hidden overflow-y-auto p-6"
+        >
+          <button
+            id="backToStatsBtn"
+            class="self-start text-purple-600 hover:underline font-semibold mb-4 flex items-center gap-1"
+          >
+            ← Back to Directory
+          </button>
+
+          <div id="studentProfileContent"></div>
+        </div>
+      </section>
       <!-- Profile screen -->
       <section
         id="profileScreen"
         class="h-[calc(100vh-192px)] flex flex-col hidden"
-      ></section>
+      >
+        <div class="flex flex-row justify-end items-center gap-1 p-4">
+          <button
+            id="userLogoutBtn"
+            class="bg-purple-400 text-white hover:bg-purple-500 active:scale-95 rounded-md shadow-md py-1 px-4 flex flex-row justify-center items-center gap-2"
+            onclick="handleLogout()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 640 640"
+              class="w-4 h-4 text-white fill-current"
+            >
+              <path
+                d="M352 64C352 46.3 337.7 32 320 32C302.3 32 288 46.3 288 64L288 320C288 337.7 302.3 352 320 352C337.7 352 352 337.7 352 320L352 64zM210.3 162.4C224.8 152.3 228.3 132.3 218.2 117.8C208.1 103.3 188.1 99.8 173.6 109.9C107.4 156.1 64 233 64 320C64 461.4 178.6 576 320 576C461.4 576 576 461.4 576 320C576 233 532.6 156.1 466.3 109.9C451.8 99.8 431.9 103.3 421.7 117.8C411.5 132.3 415.1 152.2 429.6 162.4C479.4 197.2 511.9 254.8 511.9 320C511.9 426 425.9 512 319.9 512C213.9 512 128 426 128 320C128 254.8 160.5 197.1 210.3 162.4z"
+              />
+            </svg>
+            <span>Logout</span>
+          </button>
+        </div>
+        <div class="w-full grid grid-cols-6">
+          <div class="col-span-2 flex flex-col justify-center items-center">
+            <svg
+              class="w-40 h-40 text-gray-500"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 640 640"
+              fill="currentColor"
+            >
+              <path
+                d="M470.5 463.6C451.4 416.9 405.5 384 352 384L288 384C234.5 384 188.6 416.9 169.5 463.6C133.9 426.3 112 375.7 112 320C112 205.1 205.1 112 320 112C434.9 112 528 205.1 528 320C528 375.7 506.1 426.2 470.5 463.6zM430.4 496.3C398.4 516.4 360.6 528 320 528C279.4 528 241.6 516.4 209.5 496.3C216.8 459.6 249.2 432 288 432L352 432C390.8 432 423.2 459.6 430.5 496.3zM320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM320 304C297.9 304 280 286.1 280 264C280 241.9 297.9 224 320 224C342.1 224 360 241.9 360 264C360 286.1 342.1 304 320 304zM232 264C232 312.6 271.4 352 320 352C368.6 352 408 312.6 408 264C408 215.4 368.6 176 320 176C271.4 176 232 215.4 232 264z"
+              />
+            </svg>
+          </div>
+          <div
+            class="col-span-4 flex flex-col justify-center items-start gap-2 border-l border-gray-400 pl-4"
+          >
+            <div class="flex flex-row self-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+                class="w-6 h-6 cursor-pointer hover:text-gray-500 active:scale-95"
+                fill="currentColor"
+                onclick="editUserDetails()"
+              >
+                <path
+                  d="M535.6 85.7C513.7 63.8 478.3 63.8 456.4 85.7L432 110.1L529.9 208L554.3 183.6C576.2 161.7 576.2 126.3 554.3 104.4L535.6 85.7zM236.4 305.7C230.3 311.8 225.6 319.3 222.9 327.6L193.3 416.4C190.4 425 192.7 434.5 199.1 441C205.5 447.5 215 449.7 223.7 446.8L312.5 417.2C320.7 414.5 328.2 409.8 334.4 403.7L496 241.9L398.1 144L236.4 305.7zM160 128C107 128 64 171 64 224L64 480C64 533 107 576 160 576L416 576C469 576 512 533 512 480L512 384C512 366.3 497.7 352 480 352C462.3 352 448 366.3 448 384L448 480C448 497.7 433.7 512 416 512L160 512C142.3 512 128 497.7 128 480L128 224C128 206.3 142.3 192 160 192L256 192C273.7 192 288 177.7 288 160C288 142.3 273.7 128 256 128L160 128z"
+                />
+              </svg>
+            </div>
+            <div class="flex flex-row justify-start items-center gap-2">
+              <p class="font-semibold">Username:</p>
+              <p id="profileUsername" class="font-normal">JIBA Admin</p>
+            </div>
+            <div class="flex flex-row justify-start items-center gap-2">
+              <p class="font-semibold">Email ID:</p>
+              <p id="profileEmailID" class="font-normal">
+                jiba@dmifoundations.org
+              </p>
+            </div>
+            <div class="flex flex-row justify-start items-center gap-2">
+              <p class="font-semibold">Password:</p>
+              <div class="flex flex-row justify-between items-center gap-5">
+                <p id="profilePwd" class="font-normal" data-password="">
+                  ********
+                </p>
+                <div class="flex flex-row justify-center items-center gap-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 640 640"
+                    class="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-500 active:scale-95"
+                    fill="currentColor"
+                    onclick="togglePasswordVisibility()"
+                  >
+                    <path
+                      d="M320 96C239.2 96 174.5 132.8 127.4 176.6C80.6 220.1 49.3 272 34.4 307.7C31.1 315.6 31.1 324.4 34.4 332.3C49.3 368 80.6 420 127.4 463.4C174.5 507.1 239.2 544 320 544C400.8 544 465.5 507.2 512.6 463.4C559.4 419.9 590.7 368 605.6 332.3C608.9 324.4 608.9 315.6 605.6 307.7C590.7 272 559.4 220 512.6 176.6C465.5 132.9 400.8 96 320 96zM176 320C176 240.5 240.5 176 320 176C399.5 176 464 240.5 464 320C464 399.5 399.5 464 320 464C240.5 464 176 399.5 176 320zM320 256C320 291.3 291.3 320 256 320C244.5 320 233.7 317 224.3 311.6C223.3 322.5 224.2 333.7 227.2 344.8C240.9 396 293.6 426.4 344.8 412.7C396 399 426.4 346.3 412.7 295.1C400.5 249.4 357.2 220.3 311.6 224.3C316.9 233.6 320 244.4 320 256z"
+                    />
+                  </svg>
+                  <button
+                    id="changePwdBtn"
+                    onclick="editPassword()"
+                    class="text-xs text-purple-600 hover:underline font-medium"
+                  >
+                    Change
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
+    <!-- Proctor Snaps Review Modal -->
+    <div
+      id="galleryModalOverlay"
+      class="fixed inset-x-0 top-[112px] h-[calc(100vh-112px)] bg-black/60 flex justify-center items-center z-10 hidden"
+    >
+      <section
+        id="proctorSnapsModal"
+        class="w-2/3 h-4/5 bg-white shadow-2xl rounded-lg flex flex-col"
+      >
+        <div class="relative">
+          <h3
+            class="text-center py-2 font-bold bg-purple-100 rounded-t-md text-lg"
+          >
+            Snaps Review
+          </h3>
+          <button
+            onclick="closeGalleryModal()"
+            class="absolute right-3 top-2 text-gray-500 hover:text-red-500 text-2xl font-bold"
+          >
+            &times;
+          </button>
+        </div>
+        <div
+          class="flex flex-row justify-between items-center gap-1 p-1 mb-2 text-base bg-gray-100"
+        >
+          <p>Student Name: <span id="snapsModalStudentName"></span></p>
+          <p>Student ID: <span id="snapsModalAppID"></span></p>
+        </div>
+        <p class="text-xs text-center text-red-500 font-semibold mt-2">
+          Click on an image to mark it as a violation
+        </p>
+        <div
+          id="galleryContainer"
+          class="grid grid-cols-4 gap-4 p-4 overflow-y-auto justify-items-center items-center flex-1"
+        >
+          <div class="px-4 py-2 border-t border-gray-200 bg-gray-50">
+            <label
+              for="proctorRemarks"
+              class="text-sm font-semibold text-gray-700"
+              >Admin Remarks:</label
+            >
+            <textarea
+              id="proctorRemarks"
+              class="w-full border border-gray-300 rounded-md p-2 text-sm mt-1 focus:ring-2 focus:ring-purple-500 outline-none shadow-inner"
+              rows="2"
+              placeholder="Enter reason for validation/invalidation..."
+            ></textarea>
+          </div>
+          <div
+            class="bg-purple-500 w-full aspect-video rounded-md shadow-md"
+          ></div>
+          <div
+            class="bg-purple-500 w-full aspect-video rounded-md shadow-md"
+          ></div>
+          <div
+            class="bg-purple-500 w-full aspect-video rounded-md shadow-md"
+          ></div>
+          <div
+            class="bg-purple-500 w-full aspect-video rounded-md shadow-md"
+          ></div>
+          <div
+            class="bg-purple-500 w-full aspect-video rounded-md shadow-md"
+          ></div>
+        </div>
+        <div
+          class="bg-gray-200 p-2 flex flex-row justify-evenly items-center gap-4"
+        >
+          <button
+            id="validateBtn"
+            onclick="updateProctorStatus('Validate')"
+            class="bg-green-500 hover:bg-green-600 active:scale-95 shadow-md rounded-md py-1 px-3 text-white"
+          >
+            Validate
+          </button>
+          <button
+            id="inValidateBtn"
+            onclick="updateProctorStatus('In-Validate')"
+            class="bg-red-500 hover:bg-red-600 active:scale-95 shadow-md rounded-md py-1 px-3 text-white"
+          >
+            In-Validate
+          </button>
+        </div>
+      </section>
+    </div>
+    <!-- proctor status modal -->
+    <div
+      id="proctorStatusModalOverlay"
+      class="fixed inset-0 bg-black/70 flex justify-center items-center z-[100] hidden backdrop-blur-sm"
+    >
+      <section
+        class="bg-white rounded-lg shadow-2xl p-6 w-full max-w-sm flex flex-col items-center text-center border-t-4 border-purple-600"
+      >
+        <div id="statusIcon" class="text-5xl mb-4">✅</div>
+        <h2 id="statusTitle" class="text-2xl font-bold text-gray-800 mb-2">
+          Validated
+        </h2>
+        <p id="statusMessage" class="text-gray-600 mb-6">
+          The student's test has been validated.
+        </p>
+
+        <button
+          onclick="closeStatusModal()"
+          class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-8 rounded-md transition active:scale-95 shadow-md"
+        >
+          OK
+        </button>
+      </section>
+    </div>
+    <section
+      id="adminLoginScreen"
+      class="fixed inset-0 top-[112px] w-full p-4 flex flex-row justify-center items-center hidden"
+    >
+      <form
+        action="submit"
+        id="adminLoginForm"
+        class="w-1/4 h-3/4 bg-white rounded-lg shadow-lg flex flex-col justify-start items-start gap-2 max-h-96"
+      >
+        <h2
+          class="font-semibold text-lg text-center w-full bg-purple-200 rounded-t-lg p-2"
+        >
+          Admin Login
+        </h2>
+        <div class="flex flex-col w-full p-2 gap-1">
+          <label for="email">Email ID</label>
+          <input
+            type="email"
+            id="adminEmailInput"
+            class="rounded-md shadow-md focus:ring-2 focus:ring-purple-400 outline-none border border-black p-1"
+            placeholder="Enter your Email ID"
+            required
+            autocomplete="off"
+          />
+        </div>
+        <div class="flex flex-col w-full p-2 gap-1">
+          <label for="text">Password</label>
+          <input
+            type="password"
+            id="adminPwdInput"
+            class="rounded-md shadow-md focus:ring-2 focus:ring-purple-400 outline-none border border-black p-1"
+            placeholder="Enter your Password"
+            required
+            autocomplete="off"
+          />
+        </div>
+        <button
+          type="submit"
+          id="adminLoginBtn"
+          class="bg-purple-500 hover:bg-purple-600 active:scale-95 text-white rounded-md shadow-lg py-1 w-1/2 mt-4 font-semibold self-center"
+        >
+          Login
+        </button>
+      </form>
+    </section>
   </body>
 </html>

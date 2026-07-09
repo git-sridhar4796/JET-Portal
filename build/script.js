@@ -52,9 +52,21 @@ const confirmCameraAccessBtn = document.getElementById(
 let totalTime = 0; // hold total time in seconds globally
 let userAnswers = {}; // hold user answers globally
 let studentData = {}; // hold student data globally
+let currentAttempt = 1;
 const examStartTime = new Date("2026-03-14T21:25").getTime(); // 14.03.2026 - 5.30pm (YYYY-MM-DDTHH:MM:SS)
 const resultsScriptUrl =
   "https://script.google.com/macros/s/AKfycbx4lXCelHi0mIc72wpRFoC4GwHg9fDvjsz4F71ejsU-tJVEUz29RXdnjkntOec53gY/exec";
+
+// Get user IP address
+async function captureIP() {
+  try {
+    const response = await fetch("https://api.ipify.org?format=json");
+    const data = await response.json();
+    studentData.studentIP = data.ip;
+  } catch (error) {
+    console.error("Error capturing IP", error);
+  }
+}
 
 // Schedule banner function
 const updatePortalStatus = () => {
@@ -92,7 +104,10 @@ async function fetchExamData() {
     console.error("Failed to load data from database", error);
   }
 }
-document.addEventListener("DOMContentLoaded", fetchExamData);
+document.addEventListener("DOMContentLoaded", () => {
+  fetchExamData();
+  captureIP();
+});
 
 // shuffle function
 const shuffle = (array) => {
@@ -347,6 +362,24 @@ const confirmSubmit = async () => {
   studentData.totalQuestions = activeExamSet.questions.length;
   const finalStatus =
     studentData.status == "Terminated" ? "Terminated" : "Completed";
+
+  // Send time taken data to student data object
+  const totalDurationSeconds = activeExamSet.duration * 60; // 1800 for 30 mins
+  const hoursLeft = parseInt(document.getElementById("hours").textContent) || 0;
+  const minutesLeft =
+    parseInt(document.getElementById("minutes").textContent) || 0;
+  const secondsLeft =
+    parseInt(document.getElementById("seconds").textContent) || 0;
+
+  const totalSecondsLeft = hoursLeft * 3600 + minutesLeft * 60 + secondsLeft;
+  const timeSpentSeconds = totalDurationSeconds - totalSecondsLeft;
+
+  // Convert seconds spent into a readable MM:SS format
+  const spentMin = Math.floor(timeSpentSeconds / 60);
+  const spentSec = timeSpentSeconds % 60;
+  const timeTakenFormatted = `${spentMin.toString().padStart(2, "0")}:${spentSec.toString().padStart(2, "0")}`;
+  studentData.timeTaken = timeTakenFormatted;
+
   try {
     confirmSubmitBtn.textContent = "Saving Results...";
     confirmSubmitBtn.classList.add("opacity-50", "cursor-not-allowed");
@@ -563,14 +596,21 @@ returnToExamBtn.addEventListener("click", () => {
 });
 
 // update student data function
-const updateStudentData = (name, appId, email, contact, place, examType) => {
+const updateStudentData = (
+  name,
+  studentID,
+  email,
+  contact,
+  place,
+  examType,
+) => {
   studentData.name = name;
-  studentData.applicationId = appId;
+  studentData.applicationId = studentID;
   studentData.emailId = email;
   studentData.contact = contact;
   studentData.place = place;
   studentData.examType = examType;
-  studentData.date = new Date().toLocaleString();
+  studentData.date = new Date().toISOString();
   studentData.status = "Pending";
   studentData.violationCount = 0;
   violations = 0;
@@ -579,43 +619,102 @@ const updateStudentData = (name, appId, email, contact, place, examType) => {
 // -----------------------------------------
 // LOGIN, INSTRUCTIONS & START EXAM FUNCTIONS
 // -----------------------------------------
+// Verify Student Status function
+async function verifyStudentStatus(studentID, examType) {
+  try {
+    const response = await fetch(resultsScriptUrl);
+    const allResults = await response.json();
+
+    // Filter results for this specific student and exam type
+    const studentHistory = allResults.filter(
+      (r) => r["Student ID"] === studentID && r["Exam Type"] === examType,
+    );
+
+    if (studentHistory.length > 0) {
+      // Check if Admin checked the "Retake Granted" box in Google Sheets
+      const isRetakeAuthorized = studentHistory.some(
+        (r) => r["Retake Granted"] === true || r["Retake Granted"] === "TRUE",
+      );
+
+      // Calculate the next attempt number
+      const lastAttempt = Math.max(
+        ...studentHistory.map((r) => parseInt(r["Attempt Number"]) || 1),
+      );
+
+      if (isRetakeAuthorized) {
+        return lastAttempt + 1; // Success: Return Attempt 2, 3, etc
+      } else {
+        return "BLOCKED"; // Error: Student already finished
+      }
+    }
+
+    return 1; // New student: Set Attempt 1
+  } catch (error) {
+    console.error("Database check failed:", error);
+    return "ERROR";
+  }
+}
+
 // login form submission
 const loginForm = document.getElementById("loginForm");
-loginForm.addEventListener("submit", (e) => {
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (!loginForm.checkValidity()) {
-    return;
-  }
-  // get form values
+  if (!loginForm.checkValidity()) return;
+
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Verifying...";
+  loginBtn.classList.add("opacity-50", "cursor-wait");
+
   const nameInput = document.getElementById("nameInput").value;
-  const applicationIdInput =
-    document.getElementById("applicationIdInput").value;
-  const emailIdInput = document.getElementById("emailIdInput").value;
   const contactInput = document.getElementById("contactInput").value;
-  const placeInput = document.getElementById("placeInput").value;
+
+  // Create Unique Student ID
+  const studentID =
+    nameInput.trim().replace(/\s+/g, "").toUpperCase() +
+    "-" +
+    contactInput.trim();
   const examType = document.getElementById("examTypeSelect").value;
 
-  // update applicant details
+  // Run the Database Check
+  const result = await verifyStudentStatus(studentID, examType);
+
+  if (result === "BLOCKED") {
+    alert(
+      "You have already submitted this test. Please contact the Admin Office for authorization to re-take.",
+    );
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Login";
+    loginBtn.classList.remove("opacity-50", "cursor-wait");
+    return;
+  } else if (result === "ERROR") {
+    alert("System error. Please check your connection and try again.");
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Login";
+    loginBtn.classList.remove("opacity-50", "cursor-wait");
+    return;
+  }
+
+  studentData.attemptNumber = result;
+  const emailIdInput = document.getElementById("emailIdInput").value;
+  const placeInput = document.getElementById("placeInput").value;
+
   nameTag.textContent = nameInput;
-  applicationIdTag.textContent = applicationIdInput;
+  applicationIdTag.textContent = studentID;
   emailIdTag.textContent = emailIdInput;
   placeTag.textContent = placeInput;
 
-  // hide login screen and show exam screen
   loginScreen.classList.add("hidden");
   instructionsScreen.classList.remove("hidden");
 
-  // update student data object
   updateStudentData(
     nameInput,
-    applicationIdInput,
+    studentID,
     emailIdInput,
     contactInput,
     placeInput,
     examType,
   );
   prepareExamInfo();
-  console.log(studentData);
 });
 
 // instructions screen functions
