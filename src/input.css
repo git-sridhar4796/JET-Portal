@@ -19,3 +19,23 @@
 .animate-heartbeat {
   animation: heartbeat 1s infinite ease-in-out;
 }
+
+/* Stats panel scrollbar styling */
+#infoContainer > div::-webkit-scrollbar {
+  width: 5px;
+}
+
+#infoContainer > div::-webkit-scrollbar-track {
+  background: rgba(147, 51, 234, 0.05);
+  border-radius: 9999px;
+  margin: 8px 0;
+}
+
+#infoContainer > div::-webkit-scrollbar-thumb {
+  background: rgba(147, 51, 234, 0.3);
+  border-radius: 9999px;
+}
+
+#infoContainer > div::-webkit-scrollbar-thumb:hover {
+  background: rgba(147, 51, 234, 0.6);
+}

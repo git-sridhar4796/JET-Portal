@@ -43,10 +43,10 @@ const confirmCameraAccessBtn = document.getElementById(
 );
 
 // testing toggles
-// loginScreen.classList.remove("hidden");
+// loginScreen.classList.add("hidden");
 // instructionsScreen.classList.add("hidden");
 // completionScreen.classList.add("hidden");
-// examScreen.classList.add("hidden");
+// examScreen.classList.remove("hidden");
 
 // global variables
 let totalTime = 0; // hold total time in seconds globally
