@@ -27,7 +27,7 @@
           style="font-family: &quot;Times New Roman&quot;, Times, serif"
         >
           <div
-            class="bg-white/10 rounded-full backdrop-blur-md border border-white/20 shadow-inner"
+            class="bg-white rounded-full backdrop-blur-md border border-white/20 shadow-inner"
           >
             <img
               src="JIBA_Logo_Final_wobg.png"
@@ -36,7 +36,7 @@
             />
           </div>
           <div
-            class="flex flex-col justify-center border-l-2 border-white/20 pl-4 py-1"
+            class="hidden md:flex flex-col justify-center border-l-2 border-white/20 pl-4 py-1"
           >
             <h2
               class="text-white text-2xl md:text-3xl font-black tracking-wide drop-shadow-sm"
@@ -56,9 +56,7 @@
           </div>
         </section>
 
-        <section
-          class="flex flex-col items-end justify-center text-right hidden sm:flex"
-        >
+        <section class="flex flex-col items-end justify-center text-right">
           <h1
             class="text-white text-2xl md:text-3xl font-black tracking-widest drop-shadow-md uppercase"
           >
@@ -189,7 +187,7 @@
                 class="w-full p-2 rounded-md shadow-inner outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="Enter your email ID"
                 required
-                pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+                pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
                 title="Please enter a valid email address"
                 autocomplete="off"
               />
@@ -270,7 +268,7 @@
     >
       <div class="mb-8">
         <h2
-          class="text-3xl font-black text-gray-800 flex items-center justify-center gap-3"
+          class="text-xl md:text-3xl font-black text-gray-800 flex items-center justify-center gap-3"
         >
           JIBA Entrance Test (JET)
           <span
@@ -483,11 +481,15 @@
               <span class="text-blue-500 mr-2 font-bold">•</span>
               <div>
                 <span class="font-semibold text-gray-800"
-                  >Progress Tracking:</span
+                  >Progress Tracking & Timer:</span
                 >
-                Use the <span class="font-semibold">"Stats"</span> panel on the
-                right to track your attempted and remaining questions as you
-                proceed through the exam.
+                On laptops/PCs, use the
+                <span class="font-semibold">"Stats"</span> panel on the right to
+                track your timer & attempted / remaining questions as you
+                proceed through the exam. On mobile devices, your remaining time
+                is displayed at the top-right, and you can tap the floating
+                <span class="font-semibold">"📊" button</span> at the bottom
+                right to view your full stats.
               </div>
             </li>
             <li class="flex items-start">
@@ -533,6 +535,15 @@
               <div>
                 Ensure you have a stable internet connection with a minimum
                 speed of 2-3 Mbps.
+              </div>
+            </li>
+            <li class="flex items-start">
+              <span class="text-orange-500 mr-2 font-bold">•</span>
+              <div>
+                <span class="font-semibold">Device Compatibility:</span> This
+                test can be taken only on Windows/Mac laptops/PCs or Android
+                mobile devices. iOS (iPhone/iPad) devices are strictly
+                prohibited due to OS proctoring constraints.
               </div>
             </li>
             <li class="flex items-start">
@@ -616,20 +627,49 @@
       id="examScreen"
       class="max-w-screen-xl w-full mx-auto grid grid-cols-10 m-2 gap-4 hidden font-sans"
     >
+      <!-- Mobile View - Exam Timer -->
+      <div
+        id="mobileTimerBar"
+        class="md:hidden fixed top[-75px] right-4 mb-2 z-30 bg-purple-900/90 text-white px-3 py-1.5 rounded-full shadow-lg border border-purple-400/50 flex items-center gap-1.5 backdrop-blur-md hidden"
+      >
+        <span class="text-xs text-yellow-400 font-bold uppercase">Time:</span>
+        <span
+          id="mobileTimerDisplay"
+          class="font-black text-sm tracking-tight text-white"
+          >00:00:00</span
+        >
+      </div>
       <!-- test container -->
       <section
         id="testContainer"
-        class="col-span-7 ml-2 p-4 bg-gray-50 rounded-2xl shadow-sm border border-gray-100"
+        class="col-span-10 md:col-span-7 ml-2 p-4 mt-5 bg-gray-50 rounded-2xl shadow-sm border border-gray-100"
       ></section>
+
+      <button
+        id="toggleStatsBtn"
+        class="md:hidden fixed bottom-6 right-6 z-40 bg-purple-600 hover:bg-purple-700 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl transition active:scale-95 border-2 border-white"
+        title="Open Stats & Timer"
+      >
+        📊
+      </button>
 
       <!-- stats panel container-->
       <div
-        class="col-span-3 sticky top-[100px] h-[calc(100vh-120px)] flex items-center"
+        id="statsPanelContainer"
+        class="hidden md:flex md:col-span-3 md:sticky md:top-[100px] md:h-[calc(100vh-120px)] items-center fixed inset-0 z-50 md:z-auto bg-black/60 md:bg-transparent justify-center p-4 md:p-0"
       >
         <section
           id="infoContainer"
-          class="h-[calc(100vh-140px)] max-h-[700px] bg-gradient-to-b from-purple-100/80 via-purple-200/60 to-purple-100/80 backdrop-blur-md shadow-xl rounded-2xl border border-purple-200/80 mr-2 text-xs md:text-sm text-gray-700 w-full relative overflow-hidden flex flex-col"
+          class="h-full md:h-[calc(100vh-140px)] max-h-[700px] bg-gradient-to-b from-purple-100/80 via-purple-200/60 to-purple-100/80 backdrop-blur-md shadow-xl rounded-2xl border border-purple-200/80 mr-2 text-xs md:text-sm text-gray-700 w-full relative overflow-hidden flex flex-col"
         >
+          <div class="md:hidden flex justify-end p-2 pb-0">
+            <button
+              id="closeStatsBtn"
+              class="bg-purple-300 hover:bg-purple-400 text-purple-900 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shadow-sm"
+            >
+              ✕
+            </button>
+          </div>
           <!-- Scrollable Inner Wrapper -->
           <div class="h-full overflow-y-auto p-4 flex flex-col justify-between">
             <!-- Top Row: Proctoring Status & Timer -->
@@ -862,64 +902,6 @@
       </section>
     </div>
 
-    <!-- <div
-      id="modalOverlay"
-      class="fixed inset-x-0 top-[112px] h-[calc(100vh-112px)] bg-black/60 flex justify-center items-center z-10 hidden"
-    >
-      <section
-        id="submitModal"
-        class="bg-purple-200 rounded-lg shadow-lg z-20 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 w-[90%] max-w-md flex flex-col justify-center items-center gap-4"
-      >
-        <h2 class="text-2xl font-bold text-black">Confirm Submission</h2>
-        <hr class="border-black border shadow-md w-full" />
-        <section
-          id="finalStatsContainer"
-          class="flex flex-col justify-center items-start self-start gap-1"
-        >
-          <p class="text-gray-800 text-center">
-            You are about to submit your test. Please review your stats before
-            confirming.
-          </p>
-          <p class="font-semibold text-black text-lg underline">
-            Final Stats Review
-          </p>
-          <p class="font-semibold text-black text-sm">
-            Total Questions:
-            <span id="finalTotalTag" class="font-normal text-gray-700"></span>
-          </p>
-          <p class="font-semibold text-black text-sm">
-            Attempted:
-            <span
-              id="finalAttemptedTag"
-              class="font-normal text-gray-700"
-            ></span>
-          </p>
-          <p class="font-semibold text-black text-sm">
-            Remaining:
-            <span
-              id="finalRemainingTag"
-              class="font-normal text-gray-700"
-            ></span>
-          </p>
-        </section>
-
-        <div class="flex justify-center items-center gap-4">
-          <button
-            id="confirmSubmitBtn"
-            class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-500 active:scale-95 transition shadow-md"
-          >
-            Confirm Submit
-          </button>
-          <button
-            id="reviewAgainBtn"
-            class="px-4 py-2 border border-purple-600 text-black rounded hover:bg-purple-500 hover:text-white active:scale-95 transition shadow-md"
-          >
-            Review Again
-          </button>
-        </div>
-      </section>
-    </div> -->
-
     <!-- Completion screen -->
     <section
       id="completionScreen"
@@ -985,9 +967,7 @@
           class="w-full bg-gray-200 border border-gray-100 rounded-xl p-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-6"
         >
           <div class="text-left w-full md:w-3/5">
-            <h4 class="font-bold text-base text-gray-800">
-              Explore JIBA Admissions
-            </h4>
+            <h4 class="font-bold text-base text-gray-800">Explore JIBA</h4>
             <p class="text-sm text-gray-500 mt-1">
               Discover our programs, campus life, pedagogy, and more..
             </p>
@@ -1047,47 +1027,73 @@
     </div>
     <div
       id="cameraModal"
-      class="fixed inset-0 bg-black/80 flex justify-center items-center hidden"
+      class="fixed inset-0 bg-black/80 flex justify-center items-center p-4 pt-20 md:pt-4 z-[100] hidden"
     >
-      <div class="w-2/3 h-2/3 mt-32 bg-purple-100 rounded-md flex flex-col">
+      <div
+        class="w-[95%] max-w-lg md:max-w-3xl max-h-[85vh] bg-purple-100 rounded-xl shadow-2xl flex flex-col overflow-hidden"
+      >
+        <!-- Modal Header -->
         <h2
-          class="font-semibold text-lg p-2 text-center bg-purple-300 rounded-t-md shadow-md"
+          class="font-bold text-lg md:text-xl p-3 text-center bg-purple-300 rounded-t-xl shadow-md text-purple-900 shrink-0"
         >
           Camera Verification
         </h2>
-        <div class="grid grid-cols-6 h-full">
-          <div class="col-span-3 flex flex-col justify-center items-center p-2">
+
+        <!-- Scrollable Content Body -->
+        <div
+          class="flex-1 overflow-y-auto p-4 flex flex-col md:flex-row gap-4 items-center justify-center"
+        >
+          <!-- Video Box Container -->
+          <div
+            class="w-full md:w-1/2 flex flex-col justify-center items-center"
+          >
             <div
-              class="w-full aspect-video rounded-md overflow-hidden shadow-inner border-2 border-purple-300"
+              class="w-full aspect-video rounded-lg overflow-hidden shadow-inner border-2 border-purple-300 bg-black"
             >
               <video
                 id="modalVideo"
                 class="w-full h-full object-cover"
                 autoplay
                 playsinline
+                muted
               ></video>
             </div>
+            <p class="text-xs text-purple-700 font-medium mt-1">
+              Live Camera Feed
+            </p>
           </div>
-          <div class="col-span-3 flex flex-col justify-center items-center p-2">
+
+          <!-- Instructions Image Container -->
+          <div
+            class="w-full md:w-1/2 flex flex-col justify-center items-center"
+          >
             <img
               src="Camera Setup Instructions Image.png"
               alt="camera setup instructions"
-              class="w-full h-full object-contain rounded-md"
+              class="w-full max-h-[180px] md:max-h-[220px] object-contain rounded-lg border border-purple-200 bg-white p-1 shadow-sm"
             />
+            <p class="text-xs text-purple-700 font-medium mt-1">Setup Guide</p>
           </div>
         </div>
-        <button
-          id="confirmCameraAccessBtn"
-          class="bg-purple-500 text-white rounded-md px-2 py-1 hover:bg-purple-400 active:scale-95 mb-4 shadow-md mx-auto"
+
+        <!-- Footer Button Area -->
+        <div
+          class="p-3 bg-purple-200/60 border-t border-purple-200 flex justify-center shrink-0"
         >
-          Confirm Camera Access
-        </button>
+          <button
+            id="confirmCameraAccessBtn"
+            class="bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg px-6 py-2 active:scale-95 shadow-md transition text-sm md:text-base"
+          >
+            Confirm Camera Access
+          </button>
+        </div>
       </div>
     </div>
     <video
       id="proctorVideo"
       class="fixed top-0 left-0 w-1 h-1 opacity-0 -z-50 pointer-events-none"
       autoplay
+      muted
     ></video>
     <canvas id="proctorCanvas" class="hidden"></canvas>
   </body>

@@ -1344,76 +1344,82 @@ const validateBtn = document.getElementById("validateBtn");
 const inValidateBtn = document.getElementById("inValidateBtn");
 const proctoringSnapsUrl =
   "https://script.google.com/macros/s/AKfycbyy_Hyk8p9vm8tbaySBJ1J-W0Iba29CjVMhcnvolrFGZewlO9J8ajgf8gk36VXsop63/exec";
+
 // function to open gallery modal
 const openProctorReview = async (studentId) => {
   galleryModalOverlay.classList.remove("hidden");
-  galleryContainer.innerHTML = `<p class="col-span-4 text-center py-10 text-gray-500 animate-pulse">Fetching snapshots from Drive...</p>`;
+  galleryContainer.innerHTML = `<p class="col-span-4 text-center py-10 text-gray-500 animate-pulse">Fetching proctoring media from Drive...</p>`;
+
   const studentData = rawProctoringData.find(
     (s) => s["Student ID"] === studentId,
   );
-  // update student data
   if (studentData) {
     snapsModalStudentName.textContent = studentData["Student Name"];
     snapsModalAppID.textContent = studentData["Student ID"];
   }
-  // update the snaps
+
   try {
     const response = await fetch(
       `${proctoringSnapsUrl}?action=getImages&appId=${studentId}`,
     );
-    const images = await response.json();
+    const mediaFiles = await response.json();
     galleryContainer.innerHTML = "";
-    if (images.length === 0) {
-      galleryContainer.innerHTML = `<p class="col-span-4 text-center py-10 text-gray-400">No snapshots found for this candidate.</p>`;
+
+    if (mediaFiles.length === 0) {
+      galleryContainer.innerHTML = `<p class="col-span-4 text-center py-10 text-gray-400">No media recordings found for this candidate.</p>`;
       return;
     }
-    // Create a global array to track selected snaps for this session
+
     window.currentSelectedSnaps = [];
 
-    images.forEach((base64Data, index) => {
-      // Create a wrapper for the image and the X icon
-      const imgContainer = document.createElement("div");
-      imgContainer.className =
-        "relative cursor-pointer transition-transform hover:scale-105 w-full";
+    mediaFiles.forEach((media, index) => {
+      const container = document.createElement("div");
 
-      const img = document.createElement("img");
-      img.src = base64Data;
-      img.className =
-        "w-full aspect-video object-cover rounded-md shadow-md border-4 border-transparent transition-colors";
+      if (media.type === "video") {
+        // Render a full video player if the student uploaded a video recording
+        container.className =
+          "col-span-4 w-full bg-black rounded-lg overflow-hidden shadow-lg p-2";
+        container.innerHTML = `
+          <p class="text-xs text-purple-200 font-semibold mb-1 text-center">Full Exam Video Recording</p>
+          <video controls class="w-full aspect-video rounded-md" src="${media.data}"></video>
+        `;
+      } else {
+        // Render standard snapshot grid if snapshots were used
+        container.className =
+          "relative cursor-pointer transition-transform hover:scale-105 w-full";
+        const img = document.createElement("img");
+        img.src = media.data;
+        img.className =
+          "w-full aspect-video object-cover rounded-md shadow-md border-4 border-transparent transition-colors";
 
-      // Create a red X badge (hidden by default)
-      const badge = document.createElement("div");
-      badge.className =
-        "absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold hidden shadow-md border border-white text-xs";
-      badge.innerHTML = "X";
+        const badge = document.createElement("div");
+        badge.className =
+          "absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold hidden shadow-md border border-white text-xs";
+        badge.innerHTML = "X";
 
-      imgContainer.appendChild(img);
-      imgContainer.appendChild(badge);
+        container.appendChild(img);
+        container.appendChild(badge);
 
-      // Add toggle click logic
-      imgContainer.addEventListener("click", () => {
-        const snapName = `Snap_${index + 1}`;
-        const snapIdx = window.currentSelectedSnaps.indexOf(snapName);
+        container.addEventListener("click", () => {
+          const snapName = `Snap_${index + 1}`;
+          const snapIdx = window.currentSelectedSnaps.indexOf(snapName);
 
-        if (snapIdx > -1) {
-          // Deselect if already clicked
-          window.currentSelectedSnaps.splice(snapIdx, 1);
-          img.classList.remove("border-red-600");
-          img.classList.add("border-transparent");
-          badge.classList.add("hidden");
-        } else {
-          // Select
-          window.currentSelectedSnaps.push(snapName);
-          img.classList.remove("border-transparent");
-          img.classList.add("border-red-600");
-          badge.classList.remove("hidden");
-        }
-      });
+          if (snapIdx > -1) {
+            window.currentSelectedSnaps.splice(snapIdx, 1);
+            img.classList.remove("border-red-600");
+            badge.classList.add("hidden");
+          } else {
+            window.currentSelectedSnaps.push(snapName);
+            img.classList.add("border-red-600");
+            badge.classList.remove("hidden");
+          }
+        });
+      }
 
-      galleryContainer.appendChild(imgContainer);
+      galleryContainer.appendChild(container);
     });
   } catch (error) {
-    console.error("Error fecthing snapshots:", error);
+    console.error("Error fetching proctoring media:", error);
   }
 };
 

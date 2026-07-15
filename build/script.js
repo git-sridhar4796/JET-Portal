@@ -41,12 +41,16 @@ const modalVideo = document.getElementById("modalVideo");
 const confirmCameraAccessBtn = document.getElementById(
   "confirmCameraAccessBtn",
 );
+// Detect whether user is on mobile device
+const isMobileDevice = () => {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+};
 
 // testing toggles
-// loginScreen.classList.add("hidden");
-// instructionsScreen.classList.add("hidden");
-// completionScreen.classList.add("hidden");
-// examScreen.classList.remove("hidden");
+loginScreen.classList.add("hidden");
+instructionsScreen.classList.remove("hidden");
+completionScreen.classList.add("hidden");
+examScreen.classList.add("hidden");
 
 // global variables
 let totalTime = 0; // hold total time in seconds globally
@@ -188,6 +192,11 @@ function startTimer(totalTime) {
       timerHours.textContent = hours.toString().padStart(2, "0");
       timerMinutes.textContent = minutes.toString().padStart(2, "0");
       timerSeconds.textContent = seconds.toString().padStart(2, "0");
+      // Mobile view timer
+      const mobileTimerDisplay = document.getElementById("mobileTimerDisplay");
+      if (mobileTimerDisplay) {
+        mobileTimerDisplay.textContent = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      }
       if (timeLeft <= 120) {
         timer.classList.add(
           "text-red-600",
@@ -309,6 +318,8 @@ function loadQuestions() {
 const loadCompletionScreen = () => {
   examScreen.classList.add("hidden");
   completionScreen.classList.remove("hidden");
+  mobileTimerBar.classList.add("hidden");
+  window.scrollTo(0, 0);
   hideModal();
 };
 
@@ -319,8 +330,8 @@ const showModal = () => {
   finalRemainingTag.textContent =
     activeExamSet.questions.length - Object.keys(userAnswers).length;
   modalOverlay.classList.remove("hidden");
-  confirmSubmitBtn.addEventListener("click", confirmSubmit);
-  reviewAgainBtn.addEventListener("click", hideModal);
+  confirmSubmitBtn.onclick = confirmSubmit;
+  reviewAgainBtn.onclick = hideModal;
 };
 
 // review again function
@@ -330,12 +341,21 @@ const hideModal = () => {
 
 // confirm submit function
 const confirmSubmit = async () => {
+  // Update Buttons
+  confirmSubmitBtn.textContent = "Saving Results...";
+  confirmSubmitBtn.classList.add("opacity-50", "cursor-not-allowed");
+  confirmSubmitBtn.disabled = true;
+  reviewAgainBtn.classList.add("opacity-50", "cursor-not-allowed");
+  reviewAgainBtn.disabled = true;
+
   clearInterval(timerInterval); // stop the timer
-  clearInterval(proctorTimeout); // stop the snapshot
-  // stop video
-  const stream = proctorVideo.srcObject;
-  if (stream) {
-    stream.getTracks().forEach((track) => track.stop());
+  clearInterval(proctorTimeout);
+  if (PROCTORING_MODE === "video") {
+    await stopAndUploadVideo();
+  }
+  // stop video using global stream
+  if (globalCameraStream) {
+    globalCameraStream.getTracks().forEach((track) => track.stop());
   }
   // calculate final score & percentage
   let finalScore = 0;
@@ -381,9 +401,6 @@ const confirmSubmit = async () => {
   studentData.timeTaken = timeTakenFormatted;
 
   try {
-    confirmSubmitBtn.textContent = "Saving Results...";
-    confirmSubmitBtn.classList.add("opacity-50", "cursor-not-allowed");
-    reviewAgainBtn.classList.add("opacity-50", "cursor-not-allowed");
     const finalMessage =
       finalStatus == "Terminated"
         ? "Auto-Submitted due to maximum violations"
@@ -398,6 +415,9 @@ const confirmSubmit = async () => {
 // -----------------------------------------
 // PROCTORING FUNCTIONS
 // -----------------------------------------
+// Toggle mode: "video" for full webm recordings, "snapshot" for interval screenshots
+const PROCTORING_MODE = "snapshot";
+
 let violations = 0;
 let lastViolationTime = 0; // Cooldown timer to prevent double-strikes
 
@@ -429,18 +449,28 @@ const triggerViolation = (reason) => {
   }
 };
 
-// camera monitoring via screenshots
+// camera monitoring via screenshots or video recording
 const proctoringUrl =
   "https://script.google.com/macros/s/AKfycbyy_Hyk8p9vm8tbaySBJ1J-W0Iba29CjVMhcnvolrFGZewlO9J8ajgf8gk36VXsop63/exec";
 let proctorTimeout;
 let isCameraVerified = false;
+let globalCameraStream = null;
+
+// MediaRecorder variables for full video mode
+let mediaRecorder;
+let recordedChunks = [];
 
 allowCameraBtn.addEventListener("click", async () => {
   cameraModal.classList.remove("hidden");
 
   try {
     // Camera access request
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+
+    globalCameraStream = stream;
 
     // Assign the stream to the MODAL video element
     modalVideo.srcObject = stream;
@@ -451,7 +481,9 @@ allowCameraBtn.addEventListener("click", async () => {
     console.log("Camera stream started in modal.");
   } catch (error) {
     console.error("Camera Access Error:", error);
-    alert("Camera access is required. Please check your browser permissions.");
+    alert(
+      "Camera & microphone access is required for proctoring. Please check browser permissions.",
+    );
     cameraModal.classList.add("hidden");
   }
 });
@@ -471,38 +503,28 @@ confirmCameraAccessBtn.addEventListener("click", () => {
   checkStartExamStatus();
 });
 
+// Snapshot Mode Functions
 const takeSnapshot = async () => {
-  // Safety check
-  if (proctorVideo.videoWidth === 0 || proctorVideo.videoHeight === 0) {
-    return;
-  }
+  if (proctorVideo.videoWidth === 0 || proctorVideo.videoHeight === 0) return;
 
-  // Size canvas to video
   proctorCanvas.width = proctorVideo.videoWidth;
   proctorCanvas.height = proctorVideo.videoHeight;
 
-  // Take snapshot
   const snap = proctorCanvas.getContext("2d");
   snap.drawImage(proctorVideo, 0, 0, proctorCanvas.width, proctorCanvas.height);
-
-  // 4. Convert the canvas into a compressed text string (0.5 = 50% JPEG quality)
   const imageData = proctorCanvas.toDataURL("image/jpeg", 0.5);
 
-  // Build data to be sent to drive
   const payload = {
     applicationId: studentData.applicationId,
     timestamp: new Date().getTime(),
     image: imageData,
   };
 
-  // 6. Upload to Drive via Google Apps Script
   try {
     await fetch(proctoringUrl, {
       method: "POST",
       mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain",
-      },
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(payload),
     });
     console.log("Snapshot sent to drive");
@@ -517,10 +539,77 @@ const scheduleRandomSnapshot = () => {
   proctorTimeout = setTimeout(scheduleRandomSnapshot, randomInterval);
 };
 
+// Video Recording Mode Functions
+const startVideoRecording = (stream) => {
+  recordedChunks = [];
+  try {
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: "video/webm; codecs=vp9",
+    });
+  } catch (e) {
+    // Fallback codec if vp9 isn't supported
+    mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+  }
+
+  mediaRecorder.ondataavailable = (event) => {
+    if (event.data && event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
+  };
+
+  mediaRecorder.start(1000); // Collect data chunks every second
+  console.log("Full video recording started.");
+};
+
+const stopAndUploadVideo = async () => {
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+    mediaRecorder.stop();
+  }
+
+  // Allow a moment for final data chunks to flush
+  await new Promise((resolve) => setTimeout(resolve, 600));
+
+  if (recordedChunks.length === 0) return;
+
+  const blob = new Blob(recordedChunks, { type: "video/webm" });
+  const reader = new FileReader();
+  reader.readAsDataURL(blob);
+
+  return new Promise((resolve) => {
+    reader.onloadend = async () => {
+      const base64Video = reader.result;
+      const payload = {
+        applicationId: studentData.applicationId,
+        timestamp: new Date().getTime(),
+        video: base64Video, // Sent as video payload instead of image
+      };
+
+      try {
+        await fetch(proctoringUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(payload),
+        });
+        console.log("Full video recording uploaded successfully to Drive");
+      } catch (err) {
+        console.error("Video upload failed", err);
+      }
+      resolve();
+    };
+  });
+};
+
 const startProctoring = () => {
   enterFullScreen();
-  scheduleRandomSnapshot();
-  // proctorInterval = setInterval(takeSnapshot, 30000);
+
+  if (PROCTORING_MODE === "video" && globalCameraStream) {
+    startVideoRecording(globalCameraStream);
+  } else {
+    console.log("Falling back to snapshot mode.");
+    scheduleRandomSnapshot();
+  }
+
   // Tab switching or minimizing
   document.addEventListener("visibilitychange", () => {
     if (
@@ -541,12 +630,18 @@ const startProctoring = () => {
     }
   });
 
-  // Focus loss (Alt+Tab)
-  window.addEventListener("blur", () => {
-    if (!examScreen.classList.contains("hidden")) {
-      triggerViolation("Exam window lost focus (clicked outside exam)");
-    }
-  });
+  // Focus loss (Only for PCs/Laptops -disable for mobile devices)
+  if (!isMobileDevice()) {
+    window.addEventListener("blur", () => {
+      if (!examScreen.classList.contains("hidden")) {
+        triggerViolation("Exam window lost focus (clicked outside exam)");
+      }
+    });
+  } else {
+    console.log(
+      "Mobile detected: window.blur listener disabled for stability.",
+    );
+  }
 };
 
 // full screen mode
@@ -705,6 +800,7 @@ loginForm.addEventListener("submit", async (e) => {
 
   loginScreen.classList.add("hidden");
   instructionsScreen.classList.remove("hidden");
+  window.scrollTo(0, 0);
 
   updateStudentData(
     nameInput,
@@ -737,6 +833,21 @@ const checkStartExamStatus = () => {
 
 instructionsAgreeCheckbox.addEventListener("change", checkStartExamStatus);
 
+// Mobile View - Stats Panel Toggle
+const toggleStatsBtn = document.getElementById("toggleStatsBtn");
+const closeStatsBtn = document.getElementById("closeStatsBtn");
+const statsPanelContainer = document.getElementById("statsPanelContainer");
+
+if (toggleStatsBtn && closeStatsBtn && statsPanelContainer) {
+  toggleStatsBtn.addEventListener("click", () => {
+    statsPanelContainer.classList.remove("hidden");
+  });
+
+  closeStatsBtn.addEventListener("click", () => {
+    statsPanelContainer.classList.add("hidden");
+  });
+}
+
 // -----------------
 // SYNC EXAM STATUS
 // -----------------
@@ -765,6 +876,9 @@ startExamBtn.addEventListener("click", () => {
   examScreen.classList.remove("hidden");
   window.scrollTo(0, 0);
   startTimer(totalTime);
+  // mobile view timer show/hide
+  const mobileTimerBar = document.getElementById("mobileTimerBar");
+  if (mobileTimerBar) mobileTimerBar.classList.remove("hidden");
   startProctoring();
   syncExamStatus("Active", "Started the exam");
 });
