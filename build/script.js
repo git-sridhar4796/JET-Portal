@@ -47,10 +47,10 @@ const isMobileDevice = () => {
 };
 
 // testing toggles
-loginScreen.classList.add("hidden");
-instructionsScreen.classList.remove("hidden");
-completionScreen.classList.add("hidden");
-examScreen.classList.add("hidden");
+// loginScreen.classList.add("hidden");
+// instructionsScreen.classList.remove("hidden");
+// completionScreen.classList.add("hidden");
+// examScreen.classList.add("hidden");
 
 // global variables
 let totalTime = 0; // hold total time in seconds globally
